@@ -18,7 +18,7 @@ namespace CommunityCoreLibrary.MiniMap
         // Provide label or labelKey to translate
         public string               labelKey            = string.Empty;
 
-        public int                  updateInterval      = 250;
+        public int                  updateInterval      = -1;
         public int                  drawOrder           = 100;
 
         public bool                 hiddenByDefault     = false;
@@ -32,7 +32,8 @@ namespace CommunityCoreLibrary.MiniMap
         public Type                 miniMapClass        = null;
 
         // Can link overlays directly here
-        public List<MiniMapOverlayDef> overlays         = null;
+        public List<MiniMapOverlayDef> overlays         = new List<MiniMapOverlayDef>();
+        public bool                 dynamicOverlays     = false;
 
         #endregion
 

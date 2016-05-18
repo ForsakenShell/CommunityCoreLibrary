@@ -65,6 +65,8 @@
     <Compile Include="Extensions\Vector3_Extensions.cs" />
     <Compile Include="Extensions\Def_Extensions.cs" />
     <Compile Include="Interfaces\IHelpDefView.cs" />
+    <Compile Include="MiniMapOverlays\MiniMapOverlay_Area.cs" />
+    <Compile Include="MiniMaps\MiniMap_Areas.cs" />
     <Compile Include="Structures\CompInjectionSet.cs" />
     <Compile Include="Defs\MainTab_HelpMenuDef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -270,6 +272,7 @@
     <Compile Include="Extensions\Listing_Extensions.cs" />
     <Compile Include="Extensions\Listing_Standard_Extensions.cs" />
     <Compile Include="Detours\PostLoadInitter.cs" />
+    <Compile Include="Detours\BiomeDef.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
