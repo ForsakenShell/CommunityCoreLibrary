@@ -3,5 +3,7 @@
 
     <!-- Comp Replacement Strings -->
 
+    <CompShearableGrowth>croissance</CompShearableGrowth>
+    <CompMilkableFullness>abondance</CompMilkableFullness>
 
 </LanguageData>

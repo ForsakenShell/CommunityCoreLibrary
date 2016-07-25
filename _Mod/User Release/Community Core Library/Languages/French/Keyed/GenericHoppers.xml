@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
+    <Alert_HopperNeedsBuilding_Label>Un hopper n'est pas connecté</Alert_HopperNeedsBuilding_Label>
+    <Alert_BuildingNeedsHopper_Label>La machine a besoin qu'un hopper soit connecté</Alert_BuildingNeedsHopper_Label>
 
+    <Alert_HopperNeedsBuilding_Description>Vous avez un(e) {0} sans utilisateur de hopper qui y soit connecté.\n\nPour fonctionner, un(e) {0} a besoin de dépots avec la ressource appropriée.\n\nConstruisez un bâtiment necessitant un hopper relié à {0}.</Alert_HopperNeedsBuilding_Description>
+    <Alert_BuildingNeedsHopper_Description>Vous avez un(e) {0} sans hopper qui y soit connecté.\n\nPour fonctionner, un(e) {0} doit extraire la ressource appropriée depuis un hopper préalablement rempli.\n\nConstruisez un hopper et connecté le à {0}.</Alert_BuildingNeedsHopper_Description>
 
 </LanguageData>
