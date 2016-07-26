@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+        <ColoredLights.label>Lumières</ColoredLights.label>
+
+        <NeighbourlyGrowers.label>Bassins hydroponiques</NeighbourlyGrowers.label>
+        <NeighbourlyGrowers.description>Les bassins hydroponiques ont un gadget permettant de synchroniser la production des plantes lorsqu'ils sont accolés à d'autres bassins hydroponiques. Le bassin hydroponique sélectionné sera la référence pour tous les bassins voisins. </NeighbourlyGrowers.description>
+
+</LanguageData>
