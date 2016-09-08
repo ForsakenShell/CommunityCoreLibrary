@@ -109,10 +109,10 @@ namespace CommunityCoreLibrary
                 return false;
 
             // Detour Verse.MentalStateWorker_BingingAlcohol.StateCanOccur
-            MethodInfo Verse_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( MentalStateWorker_BingingDrug ).GetMethod( "StateCanOccur", UniversalBindingFlags );
-            MethodInfo CCL_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( Detour._MentalStateWorker_BingingAlcohol ).GetMethod( "_StateCanOccur", UniversalBindingFlags );
-            if( !Detours.TryDetourFromTo( Verse_MentalStateWorker_BingingAlcohol_StateCanOccur, CCL_MentalStateWorker_BingingAlcohol_StateCanOccur ) )
-                return false;
+            //MethodInfo Verse_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( MentalStateWorker_BingingDrug ).GetMethod( "StateCanOccur", UniversalBindingFlags );
+            //MethodInfo CCL_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( Detour._MentalStateWorker_BingingAlcohol ).GetMethod( "_StateCanOccur", UniversalBindingFlags );
+            //if( !Detours.TryDetourFromTo( Verse_MentalStateWorker_BingingAlcohol_StateCanOccur, CCL_MentalStateWorker_BingingAlcohol_StateCanOccur ) )
+            //    return false;
 
             // Detour RimWorld.CompRottable.CompTickRare
             MethodInfo RimWorld_CompRottable_CompTickRare = typeof( CompRottable ).GetMethod( "CompTickRare", UniversalBindingFlags );
