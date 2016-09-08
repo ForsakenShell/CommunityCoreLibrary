@@ -97,6 +97,8 @@ namespace CommunityCoreLibrary.Detour
                     return def.Minifiable;
                 }
                 return true;
+            case ThingRequestGroup.Drug:
+                return def.IsDrug;
             case ThingRequestGroup.Construction:
                 if( !def.IsBlueprint )
                 {

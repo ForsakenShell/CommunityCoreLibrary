@@ -19,20 +19,12 @@ namespace CommunityCoreLibrary.Detour
 
         internal static string              GetVersionStringShort()
         {
-            if( _versionStringShort == null )
-            {
-                _versionStringShort = typeof( VersionControl ).GetField( "versionStringShort", BindingFlags.Static | BindingFlags.NonPublic );
-            }
-            return (string)_versionStringShort.GetValue( null );
+            return VersionControl.CurrentVersionString;
         }
 
         internal static DateTime            GetBuildDate()
         {
-            if( _buildDate == null )
-            {
-                _buildDate = typeof( VersionControl ).GetField( "buildDate", BindingFlags.Static | BindingFlags.NonPublic );
-            }
-            return (DateTime)_buildDate.GetValue( null );
+            return VersionControl.CurrentBuildDate;
         }
 
         #endregion

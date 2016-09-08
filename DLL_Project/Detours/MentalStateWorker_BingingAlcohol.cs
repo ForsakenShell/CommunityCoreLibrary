@@ -27,7 +27,7 @@ namespace CommunityCoreLibrary.Detour
         }
 
         // Enable any alcohol and not just beer
-        internal static bool _StateCanOccur( this MentalStateWorker_BingingAlcohol obj, Pawn pawn )
+        internal static bool _StateCanOccur( this MentalStateWorker_BingingDrug obj, Pawn pawn )
         {
             if(
                 ( !obj._BaseStateCanOccur( pawn ) )||
