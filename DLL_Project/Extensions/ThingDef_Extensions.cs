@@ -101,8 +101,7 @@ namespace CommunityCoreLibrary
         {
             if(
                 ( thingDef.IsIngestible() )&&
-                ( thingDef.ingestible.hediffGivers != null )&&
-                ( thingDef.ingestible.hediffGivers.Exists( hediff => hediff.hediffDef == HediffDefOf.Alcohol ) )
+                ( thingDef.ingestible.foodType == FoodTypeFlags.Liquor )
             )
             {
                 return true;

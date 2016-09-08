@@ -143,7 +143,7 @@ namespace CommunityCoreLibrary.Detour
             menuOptionsRect.y += MainMenuDrawerExt.OptionListSpacing;
             GUI.BeginGroup( menuOptionsRect );
             
-            MainMenuDrawer.DoMainMenuButtons(
+            MainMenuDrawer.DoMainMenuControls(
                 menuOptionsRect,
                 MainMenuDrawerExt.AnyMapFiles );
             

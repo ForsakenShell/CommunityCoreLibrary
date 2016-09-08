@@ -16,7 +16,7 @@ namespace CommunityCoreLibrary.Detour
 
         #region Detoured Methods
 
-        internal static Job _TryGiveJobInt( this JoyGiver_SocialRelax obj, Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator )
+        internal static Job _TryGiveJobInt( this JoyGiver_SocialRelax obj, Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator)
         {
             if( GatherSpotLister.activeSpots.NullOrEmpty() )
             {

@@ -534,7 +534,7 @@ namespace CommunityCoreLibrary.Detour
                     }
                     if(
                         ( !allowLiquor )&&
-                        ( t.def.ingestible.isPleasureDrug )
+                        ( t.def.ingestible.foodType == FoodTypeFlags.Liquor )
                     )
                     {
                         Profiler.EndSample();

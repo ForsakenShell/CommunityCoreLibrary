@@ -80,7 +80,7 @@ namespace CommunityCoreLibrary.Detour
                     yield return Toils_FoodSynthesizer.TakeAlcoholFromSynthesizer( AlcoholInd, obj.pawn );
                 }
             }
-            yield return Toils_Ingest.CarryIngestibleToChewSpot( obj.pawn )
+            yield return Toils_Ingest.CarryIngestibleToChewSpot( obj.pawn, TargetIndex.None )
                                      .FailOnDestroyedNullOrForbidden( FoodInd );
             yield return Toils_Ingest.FindAdjacentEatSurface( TableCellInd, FoodInd );
         }

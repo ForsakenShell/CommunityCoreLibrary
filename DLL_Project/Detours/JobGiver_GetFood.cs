@@ -103,7 +103,7 @@ namespace CommunityCoreLibrary.Detour
                         {
                             return null;
                         }
-                        foodDef = FoodUtility.GetFoodDef( foodSource );
+                        foodDef = FoodUtility.GetFinalIngestibleDef( foodSource );
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace CommunityCoreLibrary.Detour
             //CCL_Log.Message( string.Format( "Giving JobDriver_Ingest to {0} using {1}", pawn.LabelShort, foodSource.ThingID ) );
             // Ingest job for found food source
             var ingestJob = new Job( JobDefOf.Ingest, foodSource );
-            ingestJob.maxNumToCarry = FoodUtility.WillEatStackCountOf( pawn, foodDef );
+            ingestJob.maxNumToCarry = FoodUtility.WillIngestStackCountOf( pawn, foodDef );
             return ingestJob;
         }
 
