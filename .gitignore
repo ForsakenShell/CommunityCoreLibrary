@@ -6,8 +6,6 @@
 *.user
 *.userprefs
 *.sln.docstates
-DLL_Project/bin/*.dll
-DLL_Project/CCLModTweaks/bin/*.dll
 *.bat
 
 # Build results
@@ -194,3 +192,11 @@ ModelManifest.xml
 
 **/Assembly-CSharp.dll
 **/UnityEngine.dll
+
+_Mod/*/*/Assemblies
+
+**/bin
+**/obj
+**/packages
+
+.DS_Store
