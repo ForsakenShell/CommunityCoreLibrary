@@ -48,11 +48,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>bin\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>bin\UnityEngine.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -321,15 +321,23 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>call "$(ProjectDir)PostBuild.bat" $(ConfigurationName) "$(TargetPath)" $(SolutionDir)</PostBuildEvent>
+    <ModDir>Modders Resource</ModDir>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+    <ModDir>User Release</ModDir>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <CreateItem Include="$(TargetDir)\*.dll">
+      <Output TaskParameter="Include" ItemName="OutputLibraries" />
+    </CreateItem>
+
+    <RemoveDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
+    <MakeDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
+    <Copy SourceFiles="@(OutputLibraries)" DestinationFiles="@(OutputLibraries->'$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies\%(Filename)%(Extension)')" />
+  </Target>
   <ItemGroup>
-    <None Include="PostBuild.bat" />
     <None Include="SubControllers\SubControllerOrderingReference.txt" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="ThinkNodes\" />
-    <Folder Include="ToggleSettings\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
