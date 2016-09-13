@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AssemblyName>CCLModTweaks</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ReleaseVersion>0.15.0</ReleaseVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,16 +35,12 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Community Core Library">
-      <HintPath>..\bin\Community Core Library.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\bin\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\bin\UnityEngine.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -53,11 +49,27 @@
     <Compile Include="DefInjectionQualifiers\WorkTableCompPowerLowIdleDrawTickerChangerQualifier.cs" />
     <Compile Include="DefInjectionQualifiers\WorkTableCompPowerLowIdleDrawCompAdderQualifier.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="DefInjectionQualifiers\" />
+    <ProjectReference Include="..\CommunityCoreLibrary.csproj">
+      <Project>{a36beeb2-7379-475b-b537-827e34571962}</Project>
+      <Name>CommunityCoreLibrary</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "$(ProjectDir)PostBuild.bat" $(ConfigurationName) "$(TargetPath)" $(SolutionDir)</PostBuildEvent>
+    <ModDir>Modders Resource</ModDir>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+    <ModDir>User Release</ModDir>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <CreateItem Include="$(TargetDir)\*.dll">
+      <Output TaskParameter="Include" ItemName="OutputLibraries" />
+    </CreateItem>
+    <RemoveDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library - Mod Tweaks\Assemblies" />
+    <MakeDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library - Mod Tweaks\Assemblies" />
+    <Copy SourceFiles="@(OutputLibraries)" DestinationFiles="@(OutputLibraries->'$(SolutionDir)_Mod\$(ModDir)\Community Core Library - Mod Tweaks\Assemblies\%(Filename)%(Extension)')" />
+  </Target>
 </Project>

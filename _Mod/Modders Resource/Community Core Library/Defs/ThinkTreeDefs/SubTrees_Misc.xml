@@ -44,33 +44,6 @@
                     </subNodes>
                 </li>
 
-                <!-- Binging on alcohol -->
-                <li Class="ThinkNode_ConditionalMentalState">
-                    <state>BingingAlcohol</state>
-                    <subNodes>
-                        <li Class="ThinkNode_PrioritySorter">
-                            <minPriority>0.5</minPriority>
-                            <subNodes>
-                                <li Class="JobGiver_GetFood"/>
-                                <li Class="JobGiver_GetRest"/>
-                                <li Class="ThinkNode_Priority_GetJoy">
-                                    <subNodes>
-                                        <li Class="JobGiver_GetJoy"/>
-                                    </subNodes>
-                                </li>
-
-                                <!-- CCL Insertion hook for modders -->
-                                <li Class="CommunityCoreLibrary.ThinkNode_PrioritySorter_SubtreesByTag">
-                                    <insertTag>BingingAlcohol_PrioritySorter</insertTag>
-                                </li>
-
-                            </subNodes>
-                        </li>
-                        <li Class="JobGiver_BingeAlcohol"/>
-                        <li Class="JobGiver_WanderColony" />
-                    </subNodes>
-                </li>
-
                 <!-- Binging on food -->
                 <li Class="ThinkNode_ConditionalMentalState">
                     <state>BingingFood</state>

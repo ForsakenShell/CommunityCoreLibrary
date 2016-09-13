@@ -13,6 +13,8 @@
     <ReleaseVersion>0.15.0</ReleaseVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <AssemblyName>Community Core Library</AssemblyName>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,11 +50,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>bin\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>bin\UnityEngine.dll</HintPath>
+      <HintPath>$(SolutionDir)ThirdParty\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -74,6 +76,7 @@
     <Compile Include="Interfaces\IHelpDefView.cs" />
     <Compile Include="MiniMapOverlays\MiniMapOverlay_Area.cs" />
     <Compile Include="MiniMaps\MiniMap_Areas.cs" />
+    <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Structures\CompInjectionSet.cs" />
     <Compile Include="Defs\MainTab_HelpMenuDef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -321,15 +324,30 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>call "$(ProjectDir)PostBuild.bat" $(ConfigurationName) "$(TargetPath)" $(SolutionDir)</PostBuildEvent>
+    <ModDir>Modders Resource</ModDir>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+    <ModDir>User Release</ModDir>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <CreateItem Include="$(TargetDir)\*.dll">
+      <Output TaskParameter="Include" ItemName="OutputLibraries" />
+    </CreateItem>
+    <RemoveDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
+    <MakeDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
+    <Copy SourceFiles="@(OutputLibraries)" DestinationFiles="@(OutputLibraries->'$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies\%(Filename)%(Extension)')" />
+  </Target>
   <ItemGroup>
-    <None Include="PostBuild.bat" />
+    <None Include="packages.config" />
     <None Include="SubControllers\SubControllerOrderingReference.txt" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="ThinkNodes\" />
-    <Folder Include="ToggleSettings\" />
-  </ItemGroup>
+  <ItemGroup />
+  <Import Project="..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
+  </Target>
 </Project>

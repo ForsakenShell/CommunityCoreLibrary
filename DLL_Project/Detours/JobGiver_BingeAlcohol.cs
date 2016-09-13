@@ -28,7 +28,7 @@ namespace CommunityCoreLibrary.Detour
 
         #endregion
 
-        internal static Thing _BestConsumeTarget( this JobGiver_BingeAlcohol obj, Pawn pawn )
+        internal static Thing _BestConsumeTarget( this JobGiver_BingeDrug obj, Pawn pawn )
         {
             // Set flag to let FoodUtility.GetFoodDef() know we are looking for alcohol, not food
             _FoodUtility._GetFoodDefAlcohol = true;
