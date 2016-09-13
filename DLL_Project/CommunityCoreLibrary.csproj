@@ -74,6 +74,7 @@
     <Compile Include="Interfaces\IHelpDefView.cs" />
     <Compile Include="MiniMapOverlays\MiniMapOverlay_Area.cs" />
     <Compile Include="MiniMaps\MiniMap_Areas.cs" />
+    <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Structures\CompInjectionSet.cs" />
     <Compile Include="Defs\MainTab_HelpMenuDef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -330,7 +331,6 @@
     <CreateItem Include="$(TargetDir)\*.dll">
       <Output TaskParameter="Include" ItemName="OutputLibraries" />
     </CreateItem>
-
     <RemoveDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
     <MakeDir Directories="$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies" />
     <Copy SourceFiles="@(OutputLibraries)" DestinationFiles="@(OutputLibraries->'$(SolutionDir)_Mod\$(ModDir)\Community Core Library\Assemblies\%(Filename)%(Extension)')" />
