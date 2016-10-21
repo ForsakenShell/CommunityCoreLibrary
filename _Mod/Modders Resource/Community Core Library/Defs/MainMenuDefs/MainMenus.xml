@@ -3,7 +3,7 @@
 
     <CommunityCoreLibrary.MainMenuDef>
         <defName>LearnToPlay</defName>
-        <labelKey>Tutorial</labelKey>
+        <labelKey>LearnToPlay</labelKey>
         <order>800</order>
         <menuClass>CommunityCoreLibrary.MainMenu_LearnToPlay</menuClass>
         <!--
