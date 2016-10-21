@@ -171,7 +171,6 @@ namespace CommunityCoreLibrary.Detour
             {
                 if (menu.labelKey == "LearnToPlay" && "Tutorial".CanTranslate())
                 {
-                    CCL_Log.Message("Found LTP button.");
                     menu.labelKey = "Tutorial";
                 }
                 mainOptions.Add( new ListableOption_MainMenu( menu ) );
