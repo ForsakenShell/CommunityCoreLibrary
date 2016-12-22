@@ -169,6 +169,10 @@ namespace CommunityCoreLibrary.Detour
 
             foreach( var menu in currentMainMenuDefs )
             {
+                if (menu.labelKey == "LearnToPlay" && "Tutorial".CanTranslate())
+                {
+                    menu.labelKey = "Tutorial";
+                }
                 mainOptions.Add( new ListableOption_MainMenu( menu ) );
             }
 
