@@ -11,62 +11,62 @@ namespace CommunityCoreLibrary
     public class Alert_NeedBatteries : RimWorld.Alert_NeedBatteries
     {
 
-        static bool                         CheckThing( Thing thing )
+        static bool CheckThing(Thing thing)
         {
-            var p = thing.TryGetComp< CompPowerTrader >();
+            var p = thing.TryGetComp<CompPowerTrader>();
 
             // Only check for power traders
             // That are connected to a power network
             // Which aren't powered on
             // But want to be powered on
             return
-                ( p != null )&&
-                ( p.PowerNet != null )&&
-                ( !p.PowerOn )&&
-                ( p.DesirePowerOn );
+                (p != null) &&
+                (p.PowerNet != null) &&
+                (!p.PowerOn) &&
+                (p.DesirePowerOn);
 
         }
 
-        public override AlertReport         Report
+        public override AlertReport GetReport()
         {
-            get
-            {
-                if( Find.ListerBuildings.ColonistsHaveBuilding( (thing) =>
+            var lists = from map in Find.Maps
+                        select map.listerBuildings;
+
+            if (lists.Any(list => list.ColonistsHaveBuilding(thing =>
                 {
-                    if(
-                        ( thing is Building_Battery )&&
-                        ( thing.def.HasComp( typeof( CompPowerBattery ) ) )
-                    )
-                    {   // Building is a battery
+                    if (thing is Building_Battery && thing.def.HasComp(typeof(CompPowerBattery)))
+                    {
                         return true;
                     }
-                    if(
-                        ( thing.def.HasComp( typeof( CompPowerPlant ) ) )||
-                        ( thing.def.HasComp( typeof( CompPowerPlantWind ) ) )||
-                        ( thing.def.HasComp( typeof( CompPowerPlantSolar ) ) )||
-                        ( thing.def.HasComp( typeof( CompPowerPlantSteam) ) )
-                    )
+
+                    if (
+                        thing.def.HasComp(typeof(CompPowerPlant)) ||
+                        thing.def.HasComp(typeof(CompPowerPlantWind)) ||
+                        thing.def.HasComp(typeof(CompPowerPlantSolar)) ||
+                        thing.def.HasComp(typeof(CompPowerPlantSteam)))
                     {   // Building is a power plant
                         return true;
                     }
-                    return false;
-                } ) )
-                {
-                    return AlertReport.Inactive;
-                }
-                // Check for individual power trader which is low
-                var powerTraders = Find.ListerBuildings.allBuildingsColonist.FindAll( CheckThing );
-                if( ( powerTraders != null )&&
-                    ( powerTraders.Count > 0 ) )
-                {
-                    return AlertReport.CulpritIs( powerTraders.RandomElement() );
-                }
 
-                // All power trader's good
+                    return false;
+                })))
+            {
                 return AlertReport.Inactive;
             }
+
+            // Check for individual power trader which is low
+            var powerTraders = from map in Find.Maps
+                               from building in map.listerBuildings.allBuildingsColonist
+                               where CheckThing(building)
+                               select building;
+
+            if (powerTraders.Count() > 0)
+            {
+                return AlertReport.CulpritIs(powerTraders.RandomElement());
+            }
+
+            // All power trader's good
+            return AlertReport.Inactive;
         }
-
     }
-
 }

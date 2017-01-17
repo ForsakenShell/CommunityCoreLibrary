@@ -10,52 +10,34 @@ namespace CommunityCoreLibrary
 
     public class Alert_PasteDispenserNeedsHopper : RimWorld.Alert_PasteDispenserNeedsHopper
     {
-        
-        public override AlertReport Report
+
+        public override AlertReport GetReport()
         {
-            get
+            var dispensers = from map in Find.Maps
+                             from building in map.listerBuildings.allBuildingsColonist
+                             where building is Building_NutrientPasteDispenser
+                             select building;
+
+            foreach (var dispenser in dispensers)
             {
-                var dispensers = Find.ListerBuildings.allBuildingsColonist.Where( b => (
-                    ( b.def.thingClass == typeof( Building_NutrientPasteDispenser ) )||
-                    ( b.def.thingClass.IsSubclassOf( typeof( Building_NutrientPasteDispenser ) ) )
-                ) ).ToList();
+                var CompHopperUser = dispenser.TryGetComp<CompHopperUser>();
 
-                foreach( var dispenser in dispensers )
+                if (CompHopperUser == null || CompHopperUser.FindHoppers().NullOrEmpty())
                 {
-                    var showAlert = true;
-                    var CompHopperUser = dispenser.TryGetComp<CompHopperUser>();
-                    if( CompHopperUser != null )
-                    {
-                        var hoppers = CompHopperUser.FindHoppers();
-                        if( !hoppers.NullOrEmpty() )
-                        {
-                            showAlert = false;
-                        }
-                    }
-                    if( showAlert )
-                    {
-                        foreach( IntVec3 c in GenAdj.CellsAdjacentCardinal( dispenser ) )
-                        {
-                            Thing thing = (Thing) GridsUtility.GetEdifice( c );
-                            if(
-                                ( thing != null )&&
-                                ( thing.def == ThingDefOf.Hopper )
-                            )
-                            {
-                                showAlert = false;
-                                break;
-                            }
-                        }
-                    }
-                    if( showAlert )
-                    {
-                        return AlertReport.CulpritIs( dispenser );
-                    }
+                    continue;
                 }
-                return AlertReport.Inactive;
+
+                var edifices = from cell in GenAdj.CellsAdjacentCardinal(dispenser)
+                               from map in Find.Maps
+                               select GridsUtility.GetEdifice(cell, map);
+
+                if (edifices.Any(edifice => edifice != null && edifice.def == ThingDefOf.Hopper))
+                {
+                    return AlertReport.CulpritIs(dispenser);
+                }
             }
+
+            return AlertReport.Inactive;
         }
-
     }
-
 }

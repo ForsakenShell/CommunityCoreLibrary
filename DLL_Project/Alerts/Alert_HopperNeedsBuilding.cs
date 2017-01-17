@@ -11,36 +11,39 @@ using Verse;         // RimWorld universal objects are here
 
 namespace CommunityCoreLibrary
 {
-
-    public class Alert_HopperNeedsBuilding : Alert_High
+    public class Alert_HopperNeedsBuilding : Alert
     {
-
-        public override AlertReport         Report
+        public override AlertPriority Priority
         {
             get
             {
-                var buildings =
-                    Find.ListerBuildings.allBuildingsColonist
-                        .Where( b => (
-                            ( b.def.IsHopper() )
-                        ) ).ToList();
-
-                foreach( var building in buildings )
-                {
-                    var hopperComp = building.GetComp<CompHopper>();
-                    if( hopperComp.FindHopperUser() == null )
-                    {
-                        this.baseExplanation = "Alert_HopperNeedsBuilding_Description".Translate( building.def.label );
-                        return AlertReport.CulpritIs( building );
-                    }
-                }
-                return AlertReport.Inactive;
+                return AlertPriority.High;
             }
+        }
+
+        public override AlertReport GetReport()
+        {
+            var buildings = from map in Find.Maps
+                            from building in map.listerBuildings.allBuildingsColonist
+                            where building.def.IsHopper()
+                            select building;
+
+            foreach (var building in buildings)
+            {
+                var hopperComp = building.GetComp<CompHopper>();
+                if (hopperComp.FindHopperUser() == null)
+                {
+                    this.defaultExplanation = "Alert_HopperNeedsBuilding_Description".Translate(building.def.label);
+                    return AlertReport.CulpritIs(building);
+                }
+            }
+
+            return AlertReport.Inactive;
         }
 
         public Alert_HopperNeedsBuilding()
         {
-            this.baseLabel = "Alert_HopperNeedsBuilding_Label".Translate();
+            this.defaultLabel = "Alert_HopperNeedsBuilding_Label".Translate();
         }
     }
 }
