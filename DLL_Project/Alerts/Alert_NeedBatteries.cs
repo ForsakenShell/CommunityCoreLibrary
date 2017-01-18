@@ -11,7 +11,7 @@ namespace CommunityCoreLibrary
     public class Alert_NeedBatteries : RimWorld.Alert_NeedBatteries
     {
 
-        static bool CheckThing(Thing thing)
+        static bool CheckThing( Thing thing )
         {
             var p = thing.TryGetComp<CompPowerTrader>();
 
@@ -30,26 +30,28 @@ namespace CommunityCoreLibrary
         public override AlertReport GetReport()
         {
             var lists = from map in Find.Maps
+                        where map.IsPlayerHome
                         select map.listerBuildings;
 
-            if (lists.Any(list => list.ColonistsHaveBuilding(thing =>
+            if ( lists.Any( list => list.ColonistsHaveBuilding( thing =>
                 {
-                    if (thing is Building_Battery && thing.def.HasComp(typeof(CompPowerBattery)))
+                    if ( thing is Building_Battery && thing.def.HasComp( typeof( CompPowerBattery ) ) )
                     {
                         return true;
                     }
 
                     if (
-                        thing.def.HasComp(typeof(CompPowerPlant)) ||
-                        thing.def.HasComp(typeof(CompPowerPlantWind)) ||
-                        thing.def.HasComp(typeof(CompPowerPlantSolar)) ||
-                        thing.def.HasComp(typeof(CompPowerPlantSteam)))
-                    {   // Building is a power plant
+                        thing.def.HasComp( typeof( CompPowerPlant ) ) ||
+                        thing.def.HasComp( typeof( CompPowerPlantWind ) ) ||
+                        thing.def.HasComp( typeof( CompPowerPlantSolar ) ) ||
+                        thing.def.HasComp( typeof( CompPowerPlantSteam ) ) )
+                    {
+                        // Building is a power plant
                         return true;
                     }
 
                     return false;
-                })))
+                } ) ) )
             {
                 return AlertReport.Inactive;
             }
@@ -57,12 +59,12 @@ namespace CommunityCoreLibrary
             // Check for individual power trader which is low
             var powerTraders = from map in Find.Maps
                                from building in map.listerBuildings.allBuildingsColonist
-                               where CheckThing(building)
+                               where CheckThing( building )
                                select building;
 
-            if (powerTraders.Count() > 0)
+            if ( powerTraders.Count() > 0 )
             {
-                return AlertReport.CulpritIs(powerTraders.RandomElement());
+                return AlertReport.CulpritIs( powerTraders.RandomElement() );
             }
 
             // All power trader's good

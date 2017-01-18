@@ -11,7 +11,6 @@ using Verse;         // RimWorld universal objects are here
 
 namespace CommunityCoreLibrary
 {
-
     public class Alert_BuildingNeedsHopper : Alert
     {
         public override AlertPriority Priority
@@ -25,17 +24,18 @@ namespace CommunityCoreLibrary
         public override AlertReport GetReport()
         {
             var buildings = from map in Find.Maps
+                            where map.IsPlayerHome
                             from building in map.listerBuildings.allBuildingsColonist
                             where building.def.IsHopper()
                             select building;
 
-            foreach (var building in buildings)
+            foreach ( var building in buildings )
             {
                 var userComp = building.GetComp<CompHopperUser>();
-                if (userComp.FindHoppers().NullOrEmpty())
+                if ( userComp.FindHoppers().NullOrEmpty() )
                 {
-                    this.defaultExplanation = "Alert_BuildingNeedsHopper_Description".Translate(building.def.label);
-                    return AlertReport.CulpritIs(building);
+                    this.defaultExplanation = "Alert_BuildingNeedsHopper_Description".Translate( building.def.label );
+                    return AlertReport.CulpritIs( building );
                 }
             }
 

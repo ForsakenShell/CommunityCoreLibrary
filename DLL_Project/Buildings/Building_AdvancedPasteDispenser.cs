@@ -10,18 +10,18 @@ namespace CommunityCoreLibrary
     {
         private static CompHopperUser compHopperUser;
 
-        public override void SpawnSetup(Map map)
+        public override void SpawnSetup( Map map )
         {
-            base.SpawnSetup(map);
+            base.SpawnSetup( map );
             compHopperUser = this.TryGetComp<CompHopperUser>();
         }
 
-        public override Building AdjacentReachableHopper(Pawn reacher)
+        public override Building AdjacentReachableHopper( Pawn reacher )
         {
-            var ret = base.AdjacentReachableHopper(reacher);
+            var ret = base.AdjacentReachableHopper( reacher );
 
             // Check for generic hoppers
-            if (compHopperUser == null)
+            if ( compHopperUser == null )
             {
                 return ret;
             }
@@ -32,7 +32,7 @@ namespace CommunityCoreLibrary
                                                    reacher.NormalMaxDanger(),
                                                    false)
                             where hopper.parent is Building
-                            select (Building)hopper.parent;
+                            select (Building) hopper.parent;
 
             // Default to vanilla hoppers
             return reachable.Count() == 0? ret : reachable.RandomElement();
@@ -43,14 +43,14 @@ namespace CommunityCoreLibrary
             var ret = base.FindFeedInAnyHopper(); ;
 
             // Check for generic hoppers
-            if (compHopperUser == null)
+            if ( compHopperUser == null )
             {
                 return ret;
             }
 
             var resources = from hopper in compHopperUser.FindHoppers()
-                            from resource in hopper.GetAllResources(compHopperUser.Resources)
-                            where Building_NutrientPasteDispenser.IsAcceptableFeedstock(resource.def)
+                            from resource in hopper.GetAllResources( compHopperUser.Resources )
+                            where Building_NutrientPasteDispenser.IsAcceptableFeedstock( resource.def )
                             select resource;
 
             // Default to vanilla hoppers

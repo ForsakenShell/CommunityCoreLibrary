@@ -88,7 +88,7 @@ namespace CommunityCoreLibrary
 
         #region Base ThingComp overrides
 
-        public override IEnumerable<Command> CompGetGizmosExtra()
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if(
                 ( parent.Position.IsInRoom() )&&

@@ -167,7 +167,7 @@ namespace CommunityCoreLibrary
             return stringBuilder.ToString();
         }
 
-        public override IEnumerable<Command> CompGetGizmosExtra()
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if ( ColorProps.hideGizmos )
             {

@@ -28,12 +28,13 @@ namespace CommunityCoreLibrary.Detour
 
         #endregion
 
-        internal static Thing _BestConsumeTarget( this JobGiver_BingeAlcohol obj, Pawn pawn )
+        internal static Thing _BestConsumeTarget( this JobGiver_BingeDrug obj, Pawn pawn )
         {
             // Set flag to let FoodUtility.GetFoodDef() know we are looking for alcohol, not food
             _FoodUtility._GetFoodDefAlcohol = true;
             return GenClosest.ClosestThingReachable(
                 pawn.Position,
+                pawn.Map,
                 ThingRequest.ForUndefined(),
                 PathEndMode.OnCell,
                 TraverseParms.For(
@@ -53,10 +54,10 @@ namespace CommunityCoreLibrary.Detour
                 }
                 return false;
             },
-                Find.ListerThings.AllThings
+                pawn.Map.listerThings.AllThings
                 .Where( thing => thing.def.IsAlcohol() )
                 .Concat(
-                    (IEnumerable<Thing>)Find.ListerBuildings.AllBuildingsColonistOfClass<Building_AutomatedFactory>()
+                    (IEnumerable<Thing>)pawn.Map.listerBuildings.AllBuildingsColonistOfClass<Building_AutomatedFactory>()
                     .Where( factory => (
                         ( factory.OutputToPawnsDirectly )&&
                         ( factory.BestProduct( FoodSynthesis.IsAlcohol, FoodSynthesis.SortAlcohol ) != null )

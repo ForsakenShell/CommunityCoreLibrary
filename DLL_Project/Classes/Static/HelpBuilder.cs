@@ -143,7 +143,8 @@ namespace CommunityCoreLibrary
             var thingDefs =
                 DefDatabase< ThingDef >.AllDefsListForReading.Where( t => 
                     t.IsIngestible() &&
-                    t.ingestible.isPleasureDrug 
+                    t.ingestible.drugCategory != DrugCategory.None &&
+                    t.ingestible.joy > 0f 
                 ).ToList();
 
             if( thingDefs.NullOrEmpty() )

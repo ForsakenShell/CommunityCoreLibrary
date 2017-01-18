@@ -24,17 +24,18 @@ namespace CommunityCoreLibrary
         public override AlertReport GetReport()
         {
             var buildings = from map in Find.Maps
+                            where map.IsPlayerHome
                             from building in map.listerBuildings.allBuildingsColonist
                             where building.def.IsHopper()
                             select building;
 
-            foreach (var building in buildings)
+            foreach ( var building in buildings )
             {
                 var hopperComp = building.GetComp<CompHopper>();
-                if (hopperComp.FindHopperUser() == null)
+                if ( hopperComp.FindHopperUser() == null )
                 {
-                    this.defaultExplanation = "Alert_HopperNeedsBuilding_Description".Translate(building.def.label);
-                    return AlertReport.CulpritIs(building);
+                    this.defaultExplanation = "Alert_HopperNeedsBuilding_Description".Translate( building.def.label );
+                    return AlertReport.CulpritIs( building );
                 }
             }
 

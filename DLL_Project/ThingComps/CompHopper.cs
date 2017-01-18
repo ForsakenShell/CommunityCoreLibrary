@@ -86,10 +86,10 @@ namespace CommunityCoreLibrary
             Scribe_Values.LookValue( ref wasProgrammed, "wasProgrammed", false );
         }
 
-        public override void                PostDeSpawn()
+        public override void                PostDeSpawn( Map map )
         {
             //Log.Message( string.Format( "{0}.CompHopper.PostDeSpawn()", this.parent.ThingID ) );
-            base.PostDeSpawn();
+            base.PostDeSpawn( map );
             DeprogramHopper();
             if( hopperUser != null )
             {

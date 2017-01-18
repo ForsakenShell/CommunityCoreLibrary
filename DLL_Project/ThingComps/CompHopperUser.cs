@@ -221,10 +221,10 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public override void                PostDeSpawn()
+        public override void                PostDeSpawn( Map map )
         {
             //Log.Message( string.Format( "{0}.CompHopperUser.PostDeSpawn()", this.parent.ThingID ) );
-            base.PostDeSpawn();
+            base.PostDeSpawn( map );
 
             // Scan for hoppers and deprogram each one
             var hoppers = FindHoppers();

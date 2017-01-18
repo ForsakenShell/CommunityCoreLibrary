@@ -44,16 +44,22 @@ namespace CommunityCoreLibrary
 
             Backstory b = new Backstory();
             if (!this.title.NullOrEmpty())
-                b.title = this.title;
+            {
+                b.SetTitle(this.title);
+            }
             else
             {
                 CCL_Log.Error(defName + " backstory has empty title. Skipping...", "Backstories");
                 return;
             }
             if (!titleShort.NullOrEmpty())
-                b.titleShort = titleShort;
+            {
+                b.SetTitleShort(titleShort);
+            }
             else
-                b.titleShort = b.title;
+            {
+                b.SetTitleShort(b.Title);
+            }
 
             if (!baseDescription.NullOrEmpty())
                 b.baseDesc = baseDescription;

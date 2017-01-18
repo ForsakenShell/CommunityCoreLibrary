@@ -140,10 +140,10 @@ namespace CommunityCoreLibrary
         #region Base Class Overrides
 
 #if DEBUG
-        public override void                SpawnSetup()
+        public override void                SpawnSetup( Map map )
         {
             //Log.Message( string.Format( "{0}.SpawnSetup()", this.ThingID ) );
-            base.SpawnSetup();
+            base.SpawnSetup( map );
             if( CompAutomatedFactory == null )
             {
                 CCL_Log.TraceMod(
@@ -241,7 +241,7 @@ namespace CommunityCoreLibrary
             // Scribe data
             Scribe_Values.LookValue<string>( ref recipe, "currentRecipe", string.Empty );
             Scribe_Values.LookValue<int>( ref currentProductionTick, "currentProductionTick", 0 );
-            Scribe_Collections.LookDictionary<RecipeDef,bool>( ref recipeAllowances, "productionAllowances", LookMode.DefReference, LookMode.Value );
+            Scribe_Collections.LookDictionary<RecipeDef,bool>( ref recipeAllowances, "productionAllowances", LookMode.Def, LookMode.Value );
             Scribe_Deep.LookDeep<Thing>( ref currentThing, "currentThing", null );
 
             // Resolve cross-references
