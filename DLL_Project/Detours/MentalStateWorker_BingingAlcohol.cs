@@ -8,7 +8,7 @@ using Verse.AI;
 
 namespace CommunityCoreLibrary.Detour
 {
-
+    // TODO: replace this class with _MentalStateWorker_BingingDrug
     internal static class _MentalStateWorker_BingingAlcohol
     {
 

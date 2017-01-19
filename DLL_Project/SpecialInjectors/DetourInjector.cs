@@ -109,7 +109,7 @@ namespace CommunityCoreLibrary
                 return false;
 
             // Detour Verse.MentalStateWorker_BingingAlcohol.StateCanOccur
-            MethodInfo Verse_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( MentalStateWorker_BingingAlcohol ).GetMethod( "StateCanOccur", UniversalBindingFlags );
+            MethodInfo Verse_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( MentalStateWorker_BingingDrug ).GetMethod( "StateCanOccur", UniversalBindingFlags );
             MethodInfo CCL_MentalStateWorker_BingingAlcohol_StateCanOccur = typeof( Detour._MentalStateWorker_BingingAlcohol ).GetMethod( "_StateCanOccur", UniversalBindingFlags );
             if( !Detours.TryDetourFromTo( Verse_MentalStateWorker_BingingAlcohol_StateCanOccur, CCL_MentalStateWorker_BingingAlcohol_StateCanOccur ) )
                 return false;

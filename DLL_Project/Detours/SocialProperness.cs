@@ -22,7 +22,7 @@ namespace CommunityCoreLibrary.Detour
                 return true;
             }
             var thingPos = !t.def.hasInteractionCell ? t.Position : t.InteractionCell;
-            return( forPrisoner == thingPos.IsInPrisonCell() );
+            return( forPrisoner == thingPos.IsInPrisonCell( t.Map ) );
         }
 
     }

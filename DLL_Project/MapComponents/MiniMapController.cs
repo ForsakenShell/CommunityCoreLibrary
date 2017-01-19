@@ -40,7 +40,7 @@ namespace CommunityCoreLibrary.MiniMap
             regEx = new Regex( regExPattern );
         }
 
-        public                          MiniMapController()
+        public                          MiniMapController( Map map ) : base( map )
         {
             Window_MiniMap.minimapRect = defaultWindowRect;
         }

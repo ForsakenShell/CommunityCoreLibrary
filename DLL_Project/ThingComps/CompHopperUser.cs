@@ -838,7 +838,7 @@ namespace CommunityCoreLibrary
             var occupiedCells = parent.OccupiedRect();
             foreach( var cell in AdjCellsCardinalInBounds )
             {
-                var hopper = FindHopper( cell );
+                var hopper = FindHopper( cell, parent.Map );
                 if (
                     ( hopper != null )&&
                     ( occupiedCells.Cells.Contains( hopper.parent.Position + hopper.parent.Rotation.FacingCell ) )
@@ -852,16 +852,16 @@ namespace CommunityCoreLibrary
             return hoppers;
         }
 
-        public static List<CompHopper>      FindHoppers( IntVec3 thingCenter, Rot4 thingRot, IntVec2 thingSize )
+        public static List<CompHopper>      FindHoppers( IntVec3 thingCenter, Rot4 thingRot, IntVec2 thingSize, Map map )
         {
             //Log.Message( string.Format( "CompHopperUser.FindHoppers( {0}, {1}, {2} )", thingCenter.ToString(), thingRot.ToString(), thingSize.ToString() ) );
             // Find hoppers for near cell
             var hoppers = new List<CompHopper>();
             var occupiedCells = GenAdj.OccupiedRect( thingCenter, thingRot, thingSize );
             foreach( var cell in GenAdj.CellsAdjacentCardinal( thingCenter, thingRot, thingSize ).
-                Where( c => c.InBounds() ).ToList() )
+                Where( c => c.InBounds( map ) ).ToList() )
             {
-                var hopper = FindHopper( cell );
+                var hopper = FindHopper( cell, map );
                 if (
                     ( hopper != null ) &&
                     ( occupiedCells.Cells.Contains( hopper.Building.Position + hopper.Building.Rotation.FacingCell ) )
@@ -875,10 +875,10 @@ namespace CommunityCoreLibrary
             return hoppers;
         }
 
-        public static CompHopper            FindHopper( IntVec3 cell )
+        public static CompHopper            FindHopper( IntVec3 cell, Map map )
         {
             //var str = string.Format( "CompHopperUser.FindHopper( {0} )", cell.ToString() );
-            if( !cell.InBounds() )
+            if( !cell.InBounds( map ) )
             {
                 //Log.Message( str );
                 return null;
@@ -887,18 +887,18 @@ namespace CommunityCoreLibrary
             if( Scribe.mode != LoadSaveMode.Inactive )
             {   // Find hopper in world matching cell
                 if(
-                    ( Find.ThingGrid == null )||
-                    ( Find.ThingGrid.ThingsAt( cell ).Count() == 0 )
+                    ( map.thingGrid == null )||
+                    ( map.thingGrid.ThingsAt( cell ).Count() == 0 )
                 )
                 {
                     //Log.Message( str );
                     return null;
                 }
-                thingList = Find.ThingGrid.ThingsAt( cell ).ToList();
+                thingList = map.thingGrid.ThingsAt( cell ).ToList();
             }
             else
             {   // Find hopper in cell
-                thingList = cell.GetThingList();
+                thingList = cell.GetThingList( map );
             }
             if( !thingList.NullOrEmpty() )
             {

@@ -29,6 +29,7 @@ namespace CommunityCoreLibrary
 
         public override AlertReport GetReport()
         {
+            //TODO: the logic here isn't quite right - it should be doing this on a map by map basis
             var lists = from map in Find.Maps
                         where map.IsPlayerHome
                         select map.listerBuildings;
@@ -58,8 +59,9 @@ namespace CommunityCoreLibrary
 
             // Check for individual power trader which is low
             var powerTraders = from map in Find.Maps
+                               where map.IsPlayerHome
                                from building in map.listerBuildings.allBuildingsColonist
-                               where CheckThing( building )
+                               where CheckThing(building)
                                select building;
 
             if ( powerTraders.Count() > 0 )

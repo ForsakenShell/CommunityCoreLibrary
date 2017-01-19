@@ -25,7 +25,7 @@ namespace CommunityCoreLibrary.Controller
             {
                 ModHelperDef.GetInjector( typeof( MHD_SpecialInjectors ) ),
                 ModHelperDef.GetInjector( typeof( MHD_ThingComps ) ),
-                ModHelperDef.GetInjector( typeof( MHD_ITabs ) ),
+                ModHelperDef.GetInjector( typeof( MHD_InspectTabBases ) ),
                 ModHelperDef.GetInjector( typeof( MHD_TickerSwitcher ) ),
                 ModHelperDef.GetInjector( typeof( MHD_Facilities ) ),
                 ModHelperDef.GetInjector( typeof( MHD_StockGenerators ) ),

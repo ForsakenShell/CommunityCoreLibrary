@@ -18,7 +18,9 @@ namespace CommunityCoreLibrary.Detour
 
         internal static Job _TryGiveJobInt( this JoyGiver_SocialRelax obj, Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator )
         {
-            if( GatherSpotLister.activeSpots.NullOrEmpty() )
+            var lister = pawn.Map.gatherSpotLister;
+
+            if (lister.activeSpots.NullOrEmpty() )
             {
                 return (Job)null;
             }
@@ -28,9 +30,9 @@ namespace CommunityCoreLibrary.Detour
             var RadialPatternMiddleOutward = JoyGiver_SocialRelax_Extensions.RadialPatternMiddleOutward();
 
             workingSpots.Clear();
-            for( int index = 0; index < GatherSpotLister.activeSpots.Count; ++index )
+            for( int index = 0; index < lister.activeSpots.Count; ++index )
             {
-                workingSpots.Add( GatherSpotLister.activeSpots[ index ] );
+                workingSpots.Add(lister.activeSpots[ index ] );
             }
 
             CompGatherSpot compGatherSpot;
@@ -56,19 +58,14 @@ namespace CommunityCoreLibrary.Detour
                     {
                         for( int index = 0; index < 30; ++index )
                         {
-                            Building sittableThing = compGatherSpot.parent.RandomAdjacentCellCardinal().GetEdifice();
+                            Building sittableThing = compGatherSpot.parent.RandomAdjacentCellCardinal().GetEdifice( compGatherSpot.parent.Map );
                             if(
                                 ( sittableThing != null )&&
                                 ( sittableThing.def.building.isSittable )&&
-                                ( pawn.CanReserve(
-                                    (TargetInfo)( (Thing)sittableThing ),
-                                    1 ) )
+                                ( pawn.CanReserve( sittableThing, 1 ) )
                             )
                             {
-                                job = new Job(
-                                    JobDefOf.SocialRelax,
-                                    (TargetInfo)( (Thing)compGatherSpot.parent ),
-                                    (TargetInfo)( (Thing)sittableThing ) );
+                                job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, sittableThing );
                             }
                         }
                     }
@@ -76,26 +73,23 @@ namespace CommunityCoreLibrary.Detour
                     {
                         for( int index = 0; index < RadialPatternMiddleOutward.Count; ++index )
                         {
-                            Building sittableThing = ( compGatherSpot.parent.Position + RadialPatternMiddleOutward[ index ] ).GetEdifice();
+                            Building sittableThing = ( compGatherSpot.parent.Position + RadialPatternMiddleOutward[ index ] )
+                                .GetEdifice( compGatherSpot.parent.Map );
                             if(
                                 ( sittableThing != null )&&
                                 ( sittableThing.def.building.isSittable )&&
                                 (
-                                    ( pawn.CanReserve(
-                                        (TargetInfo)( (Thing)sittableThing ),
-                                        1 ) )&&
+                                    ( pawn.CanReserve(sittableThing, 1 ) )&&
                                     ( !sittableThing.IsForbidden( pawn ) )&&
                                     ( GenSight.LineOfSight(
                                         compGatherSpot.parent.Position,
                                         sittableThing.Position,
+                                        sittableThing.Map,
                                         true ) )
                                 )
                             )
                             {
-                                job = new Job(
-                                    JobDefOf.SocialRelax,
-                                    (TargetInfo)( (Thing)compGatherSpot.parent ),
-                                    (TargetInfo)( (Thing)sittableThing ) );
+                                job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, sittableThing );
                                 break;
                             }
                         }
@@ -110,17 +104,15 @@ namespace CommunityCoreLibrary.Detour
                                         PathEndMode.OnCell,
                                         Danger.None,
                                         1 ) )&&
-                                    ( occupySpot.GetEdifice() == null )&&
+                                    ( occupySpot.GetEdifice( compGatherSpot.parent.Map ) == null )&&
                                     ( GenSight.LineOfSight(
                                         compGatherSpot.parent.Position,
                                         occupySpot,
+                                        compGatherSpot.parent.Map,
                                         true ) )
                                 )
                                 {
-                                    job = new Job(
-                                        JobDefOf.SocialRelax,
-                                        (TargetInfo)( (Thing)compGatherSpot.parent ),
-                                        (TargetInfo)occupySpot );
+                                    job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, occupySpot );
                                 }
                             }
                         }
@@ -137,7 +129,7 @@ namespace CommunityCoreLibrary.Detour
                         )
                     )
                     {
-                        List<Thing> list = Find.ListerThings.AllThings.Where( t => (
+                        List<Thing> list = pawn.Map.listerThings.AllThings.Where( t => (
                             ( t.def.IsAlcohol() )||
                             ( t is Building_AutomatedFactory )
                         ) ).ToList();
@@ -145,6 +137,7 @@ namespace CommunityCoreLibrary.Detour
                         {
                             Thing thing = GenClosest.ClosestThing_Global_Reachable(
                                 compGatherSpot.parent.Position,
+                                pawn.Map,
                                 list,
                                 PathEndMode.OnCell,
                                 TraverseParms.For(
@@ -162,7 +155,7 @@ namespace CommunityCoreLibrary.Detour
                                 {
                                     var FS = t as Building_AutomatedFactory;
                                     if(
-                                        ( !FS.InteractionCell.Standable() )||
+                                        ( !FS.InteractionCell.Standable( t.Map ) )||
                                         ( !FS.CompPowerTrader.PowerOn )||
                                         ( FS.BestProduct( FoodSynthesis.IsAlcohol, FoodSynthesis.SortAlcohol ) == null )
                                     )
@@ -174,8 +167,8 @@ namespace CommunityCoreLibrary.Detour
                             } );
                             if( thing != null )
                             {
-                                job.targetC = (TargetInfo)thing;
-                                job.maxNumToCarry = Mathf.Min( thing.stackCount, thing.def.ingestible.maxNumToIngestAtOnce );
+                                job.targetC = thing;
+                                job.count = Mathf.Min( thing.stackCount, thing.def.ingestible.maxNumToIngestAtOnce );
                             }
                         }
                     }

@@ -363,7 +363,7 @@ namespace CommunityCoreLibrary
                 ( currentThing.stackCount > 0 )
             )
             {
-                GenSpawn.Spawn( currentThing, useCell );
+                GenSpawn.Spawn( currentThing, useCell, this.Map );
                 currentThing = null;
                 currentProductionTick = 0;
             }
@@ -611,7 +611,7 @@ namespace CommunityCoreLibrary
                 {
                     bool addToUsable = true;
                     bool addToPrefered = false;
-                    foreach( var cellThing in cell.GetThingList() )
+                    foreach( var cellThing in cell.GetThingList( this.Map ) )
                     {
                         if( cellThing is IStoreSettingsParent )
                         {
@@ -655,7 +655,7 @@ namespace CommunityCoreLibrary
                     for( int index = 0; index < preferedCells.Count; ++index )
                     {
                         var cell = preferedCells[ index ];
-                        foreach( var cellThing in cell.GetThingList() )
+                        foreach( var cellThing in cell.GetThingList( this.Map ) )
                         {
                             if(
                                 ( cellThing.CanStackWith( currentThing ) )&&
@@ -682,7 +682,7 @@ namespace CommunityCoreLibrary
 
             if( CompAutomatedFactory.Properties.outputVector == FactoryOutputVector.InteractionCell )
             {
-                foreach( var cellThing in this.InteractionCell.GetThingList() )
+                foreach( var cellThing in this.InteractionCell.GetThingList( this.Map ) )
                 {
                     if(
                         ( cellThing.CanStackWith( currentThing ) )&&

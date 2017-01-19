@@ -168,11 +168,12 @@ namespace CommunityCoreLibrary
 
         public static bool                  ChangeDesignationCategory( this ThingDef thingDef, string newCategory )
         {
-            if( string.IsNullOrEmpty( newCategory ) )
-            {   // Invalid category
+            if( string.IsNullOrEmpty( newCategory ) || thingDef.designationCategory == null )
+            {   // Invalid category or designationCategoy is not instantiated
+                // #TODO: figure out what to do in the latter case
                 return false;
             }
-            if( thingDef.designationCategory == newCategory )
+            if( thingDef.designationCategory.defName == newCategory )
             {   // Already this category
                 return true;
             }
@@ -183,11 +184,11 @@ namespace CommunityCoreLibrary
             DesignationCategoryDef oldCategory = null;
             Designator_Build oldDesignator = null;
             if(
-                ( !thingDef.designationCategory.NullOrEmpty() )&&
-                ( thingDef.designationCategory != "None" )
+                ( thingDef.designationCategory != null ) &&
+                ( thingDef.designationCategory.defName != "None" )
             )
             {
-                oldCategory = DefDatabase<DesignationCategoryDef>.GetNamed( thingDef.designationCategory );
+                oldCategory = DefDatabase<DesignationCategoryDef>.GetNamed( thingDef.designationCategory.defName );
                 oldDesignator = (Designator_Build) oldCategory._resolvedDesignators().FirstOrDefault( d => (
                     ( d is Designator_Build )&&
                     ( ( d as Designator_Build ).PlacingDef == (BuildableDef) thingDef )
@@ -210,7 +211,7 @@ namespace CommunityCoreLibrary
                 }
                 newCategoryDef._resolvedDesignators().Add( newDesignator );
             }
-            thingDef.designationCategory = newCategory;
+            thingDef.designationCategory.defName = newCategory;
             return true;
         }
 

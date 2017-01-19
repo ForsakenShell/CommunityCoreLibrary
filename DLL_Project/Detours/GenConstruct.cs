@@ -12,7 +12,7 @@ namespace CommunityCoreLibrary.Detour
     internal static class _GenConstruct
     {
 
-        internal static bool _CanBuildOnTerrain( BuildableDef entDef, IntVec3 c, Rot4 rot, Thing thingToIgnore = null )
+        internal static bool _CanBuildOnTerrain( BuildableDef entDef, IntVec3 c, Rot4 rot, Map map, Thing thingToIgnore = null )
         {
 
             CompProperties_RestrictedPlacement Restrictions = null;
@@ -41,15 +41,15 @@ namespace CommunityCoreLibrary.Detour
             if( Restrictions != null )
             {
                 var cellRect = GenAdj.OccupiedRect( c, rot, entDef.Size );
-                cellRect.ClipInsideMap();
+                cellRect.ClipInsideMap( map );
                 var iterator = cellRect.GetIterator();
                 while( !iterator.Done() )
                 {
-                    if( !Restrictions.RestrictedTerrain.Contains( Find.TerrainGrid.TerrainAt( iterator.Current ) ) )
+                    if( !Restrictions.RestrictedTerrain.Contains( map.terrainGrid.TerrainAt( iterator.Current ) ) )
                     {
                         return false;
                     }
-                    var thingList = iterator.Current.GetThingList();
+                    var thingList = iterator.Current.GetThingList( map );
                     for( int index = 0; index < thingList.Count; ++index )
                     {
                         if( thingList[ index ] != thingToIgnore )
@@ -72,21 +72,21 @@ namespace CommunityCoreLibrary.Detour
                 // Use the vanilla method to check
                 if(
                     ( entDef is TerrainDef ) &&
-                    ( !c.GetTerrain().changeable )
+                    ( !c.GetTerrain( map ).changeable )
                 )
                 {
                     return false;
                 }
                 var cellRect = GenAdj.OccupiedRect( c, rot, entDef.Size );
-                cellRect.ClipInsideMap();
+                cellRect.ClipInsideMap( map );
                 var iterator = cellRect.GetIterator();
                 while( !iterator.Done() )
                 {
-                    if( !Find.TerrainGrid.TerrainAt( iterator.Current ).affordances.Contains( entDef.terrainAffordanceNeeded ) )
+                    if( !map.terrainGrid.TerrainAt( iterator.Current ).affordances.Contains( entDef.terrainAffordanceNeeded ) )
                     {
                         return false;
                     }
-                    var thingList = iterator.Current.GetThingList();
+                    var thingList = iterator.Current.GetThingList( map );
                     for( int index = 0; index < thingList.Count; ++index )
                     {
                         if( thingList[ index ] != thingToIgnore )

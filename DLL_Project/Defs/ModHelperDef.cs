@@ -30,7 +30,7 @@ namespace CommunityCoreLibrary
         // InjectionSubController
         public List< Type >                 SpecialInjectors;
         public List< CompInjectionSet >     ThingComps;
-        public List< ITabInjectionSet >     ITabs;
+        public List< InspectTabBaseInjectionSet >     InspectTabBases;
         public List< TickerSwitcher >       tickerSwitcher;
         public List< FacilityInjectionSet > Facilities;
         public List< StockGeneratorInjectionSet > TraderKinds;
@@ -42,7 +42,7 @@ namespace CommunityCoreLibrary
 
         // InjectionSubController
         public List< Type >                 PostLoadInjectors;
-        public List< Type >                 MapComponents;
+        public List< Type >                 MapComponents;  //TODO: where is this set?
         public List< DesignatorData >       Designators;
 
         #endregion
@@ -80,7 +80,7 @@ namespace CommunityCoreLibrary
             {
                 new MHD_SpecialInjectors(),
                 new MHD_ThingComps(),
-                new MHD_ITabs(),
+                new MHD_InspectTabBases(),
                 new MHD_TickerSwitcher(),
                 new MHD_Facilities(),
                 new MHD_StockGenerators(),

@@ -434,21 +434,20 @@ namespace CommunityCoreLibrary.Detour
                         //CCL_Log.Message( string.Format( "{0} cannot use {1} because it is unpowered", getter.LabelShort, t.ThingID ) );
                         return false;
                     }
-                    if( !t.InteractionCell.Standable() )
+                    if( !t.InteractionCell.Standable( t.Map ) )
                     {
                         Profiler.EndSample();
                         //CCL_Log.Message( string.Format( "{0} cannot use {1} because the interaction cell is unstandable", getter.LabelShort, t.ThingID ) );
                         return false;
                     }
-                    if( !getter.Position.CanReach(
+                    if( !ReachabilityUtility.CanReach(
+                        getter,
                         t.InteractionCell,
                         PathEndMode.OnCell,
-                        TraverseParms.For(
-                            getter,
-                            Danger.Some,
-                            TraverseMode.ByPawn,
-                            false )
-                    ) )
+                        Danger.Some,
+                        false,
+                        TraverseMode.ByPawn)
+                    )
                     {
                         Profiler.EndSample();
                         //CCL_Log.Message( string.Format( "{0} cannot use {1} because it is unreachable", getter.LabelShort, t.ThingID ) );
@@ -533,8 +532,10 @@ namespace CommunityCoreLibrary.Detour
                         return false;
                     }
                     if(
+                        // TODO: this doesn't seem right, but I believe I kept the logic the same
                         ( !allowLiquor )&&
-                        ( t.def.ingestible.isPleasureDrug )
+                        ( t.def.ingestible.drugCategory != DrugCategory.None )&&
+                        ( t.def.ingestible.joy > 0f )
                     )
                     {
                         Profiler.EndSample();

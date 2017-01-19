@@ -43,7 +43,7 @@ namespace CommunityCoreLibrary
                 }
                 if ( x == tex.width - 1 )
                 {
-                    // only need to check this once, if a single pixel has alpha it will inevitably pop up.
+                    // only need to check this once, if a single pixel has alpha it will inevInspectTabBasely pop up.
                     CCL_Log.Error( "Whole texture will be cropped." );
                     return tex;
                 }

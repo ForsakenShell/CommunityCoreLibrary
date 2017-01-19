@@ -52,7 +52,8 @@ namespace CommunityCoreLibrary
                 return true;
             }
 
-            var colonyMapComponents = Find.Map.components;
+            // TODO: Why isn't this used?  Is this code still right?
+            // var colonyMapComponents = Find.Map.components;
 
             foreach( var componentType in def.MapComponents )
             {
@@ -72,7 +73,9 @@ namespace CommunityCoreLibrary
                 return true;
             }
 
-            var existingComponents = Find.Map.components;
+            var existingComponents = (from map in Find.Maps
+                                      from component in map.components
+                                      select component).ToList();
 
             foreach( var componentType in def.MapComponents )
             {

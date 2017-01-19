@@ -37,7 +37,7 @@ namespace CommunityCoreLibrary.Detour
         internal static CompRefrigerated    CompRefrigerated( this CompRottable obj )
         {
             IntVec3 checkPos = IntVec3.Invalid;
-            if( obj.parent.holder != null )
+            if( obj.parent.holdingContainer != null )
             {
                 checkPos = obj.parent.PositionHeld;
             }
@@ -47,12 +47,12 @@ namespace CommunityCoreLibrary.Detour
             }
             if(
                 ( checkPos == IntVec3.Invalid )||
-                ( !checkPos.InBounds() )
+                ( !checkPos.InBounds( obj.parent.Map ))
             )
             {
                 return null;
             }
-            var refrigerator = checkPos.GetThingList().FirstOrDefault( t => (
+            var refrigerator = checkPos.GetThingList( obj.parent.Map ).FirstOrDefault( t => (
                 ( t.TryGetComp<CompRefrigerated>() != null )
             ) );
             return refrigerator?.TryGetComp<CompRefrigerated>();
@@ -98,7 +98,8 @@ namespace CommunityCoreLibrary.Detour
                 return;
             }
             float num = obj.RotProgress;
-            obj.RotProgress += (float) Mathf.RoundToInt( 1f * GenTemperature.RotRateAtTemperature( GenTemperature.GetTemperatureForCell( obj.parent.PositionHeld ) ) * 250f );
+            obj.RotProgress += (float) Mathf.RoundToInt(1f * GenTemperature.RotRateAtTemperature( 
+                GenTemperature.GetTemperatureForCell( obj.parent.PositionHeld, obj.parent.Map ) ) * 250f );
             if(
                 ( obj.Stage == RotStage.Rotting )&&
                 ( obj.PropsRot().rotDestroys )
@@ -155,7 +156,8 @@ namespace CommunityCoreLibrary.Detour
             }
             else if( ( obj.PropsRot().TicksToRotStart - obj.RotProgress ) > 0.0f )
             {
-                float num = GenTemperature.RotRateAtTemperature( Mathf.RoundToInt( GenTemperature.GetTemperatureForCell( obj.parent.Position ) ) );
+                float num = GenTemperature.RotRateAtTemperature( Mathf.RoundToInt( 
+                    GenTemperature.GetTemperatureForCell( obj.parent.Position, obj.parent.Map ) ) );
                 int rotAtCurrentTemp = obj.TicksUntilRotAtCurrentTemp;
                 if( num < 1.0f / 1000.0f )
                 {

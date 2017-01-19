@@ -107,7 +107,6 @@ namespace CommunityCoreLibrary
                 foreach( var stockGenerator in injectionSet.stockGenerators )
                 {
                     traderKindDef.stockGenerators.Add( stockGenerator );
-                    stockGenerator.PostLoad();
                     stockGenerator.ResolveReferences( traderKindDef );
                     CCL_Log.TraceMod(
                         def,

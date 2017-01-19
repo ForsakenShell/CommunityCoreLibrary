@@ -485,7 +485,7 @@ namespace CommunityCoreLibrary
             {
                 toggleableGlower.Lit = turnItOn;
             }
-			CompGlower.UpdateLit();
+			CompGlower.UpdateLit( parent.Map );
 		}
 
 		void BuildScanList()

@@ -143,7 +143,7 @@ namespace CommunityCoreLibrary
                 if( IsRecipeToggle )
                 {
                     // v0.12.7 - Obsoleted check to allow for automated machines
-                    // Make sure thingDefs are of the appropriate type (has ITab_Bills)
+                    // Make sure thingDefs are of the appropriate type (has InspectTabBase_Bills)
                     /*
                     foreach( var thingDef in thingDefs )
                     {
@@ -203,10 +203,11 @@ namespace CommunityCoreLibrary
                 if( IsBuildingToggle )
                 {
                     // Make sure thingDefs are of the appropriate type (has proper designationCategory)
+                    // #TODO: figure out if this is the right way to check this
                     foreach( var thingDef in thingDefs )
                     {
-                        if( ( thingDef.designationCategory.NullOrEmpty() )||
-                            ( thingDef.designationCategory.ToLower() == "none" ) )
+                        if( ( thingDef.designationCategory == null ) ||
+                            ( thingDef.designationCategory.defName.ToLower() == "none" ) )
                         {
                             bool mhdUnlock = false;
                             foreach( var mhd in DefDatabase<ModHelperDef>.AllDefs )

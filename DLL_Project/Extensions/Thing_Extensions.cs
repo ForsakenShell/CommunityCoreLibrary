@@ -17,7 +17,7 @@ namespace CommunityCoreLibrary
         // Returns true if there is another thing in the cell with the same def
         public static bool                  IsSameThingDefInCell( this Thing thing, IntVec3 cell )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return false;
@@ -32,7 +32,7 @@ namespace CommunityCoreLibrary
         // Returns true if there is another thing in the cell with the same graphic linker
         public static bool                  IsSameGraphicLinkerInCell( this Thing thing, IntVec3 cell )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return false;
@@ -48,7 +48,7 @@ namespace CommunityCoreLibrary
         // Returns true if there is another thing in the cell with the same thing comp
         public static bool                  IsSameThingCompInCell( this Thing thing, IntVec3 cell, Type MatchingComp )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return false;
@@ -71,7 +71,7 @@ namespace CommunityCoreLibrary
         // Returns a list of things in the cell with the same def
         public static List< Thing >         ListSameThingDefInCell( this Thing thing, IntVec3 cell )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return null;
@@ -86,7 +86,7 @@ namespace CommunityCoreLibrary
         // Returns a list of things in the cell with the same graphic linker
         public static List< Thing >         ListSameGraphicLinkerInCell( this Thing thing, IntVec3 cell )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return null;
@@ -102,7 +102,7 @@ namespace CommunityCoreLibrary
         // Returns a list of things in the cell with the same thing comp
         public static List< Thing >         ListSameThingCompInCell( this Thing thing, IntVec3 cell, Type MatchingComp )
         {
-            var thingsInCell = cell.GetThingList();
+            var thingsInCell = cell.GetThingList( thing.Map );
             if( thingsInCell.NullOrEmpty() )
             {
                 return null;
@@ -530,7 +530,7 @@ namespace CommunityCoreLibrary
             {
                 return null;
             }
-            var pawnThings = thing.InteractionCell.GetThingList().Where( t => t is Pawn ).ToList();
+            var pawnThings = thing.InteractionCell.GetThingList( thing.Map ).Where( t => t is Pawn ).ToList();
             if( pawnThings.NullOrEmpty() )
             {
                 return null;
@@ -551,7 +551,7 @@ namespace CommunityCoreLibrary
             var occupiedRect = thing.OccupiedRect();
             foreach( var cell in occupiedRect )
             {
-                var pawnThings = cell.GetThingList().Where( t => t is Pawn ).ToList();
+                var pawnThings = cell.GetThingList( thing.Map ).Where( t => t is Pawn ).ToList();
                 if( !pawnThings.NullOrEmpty() )
                 {
                     foreach( var pawnThing in pawnThings )

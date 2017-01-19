@@ -32,12 +32,14 @@ namespace CommunityCoreLibrary.MiniMap
 
         private void UpdateAreaOverlays()
         {
+            var manager = Find.VisibleMap.areaManager;
+
             // since this is called every frame (FRAME, not tick), just checking area count should be good enough to detect changes.
-            if ( Find.AreaManager.AllAreas.Count == overlayWorkers.Count )
+            if ( manager.AllAreas.Count == overlayWorkers.Count )
                 return;
 
             // check if we need to add area overlays
-            foreach( var area in Find.AreaManager.AllAreas )
+            foreach( var area in manager.AllAreas )
             {
                 if ( !overlayWorkers.Any( w => ((MiniMapOverlay_Area)w).area == area ) )
                     overlayWorkers.Add( new MiniMapOverlay_Area( this, new MiniMapOverlayDef(), area ) );
@@ -49,7 +51,7 @@ namespace CommunityCoreLibrary.MiniMap
                 for ( int i = overlayWorkers.Count - 1; i >= 0; i-- )
                 {
                     MiniMapOverlay_Area overlay = overlayWorkers[i] as MiniMapOverlay_Area;
-                    if ( overlay == null || !Find.AreaManager.AllAreas.Contains( overlay.area ) )
+                    if ( overlay == null || !manager.AllAreas.Contains( overlay.area ) )
                         overlayWorkers.RemoveAt( i );
                 }
             }

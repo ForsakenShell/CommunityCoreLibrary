@@ -129,7 +129,7 @@ namespace CommunityCoreLibrary
 
             b.ResolveReferences();
             b.PostLoad();
-            b.uniqueSaveKey = this.UniqueSaveKey();
+            b.identifier = this.UniqueSaveKey();
 
             bool flag = false;
             foreach (var s in b.ConfigErrors(false))

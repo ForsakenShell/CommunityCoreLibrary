@@ -24,11 +24,11 @@ namespace CommunityCoreLibrary.Detour
                 ( t.def.size.z == 1 )
             )
             {
-                return !t.Position.Fogged();
+                return !t.Position.Fogged( t.Map );
             }
             foreach( var cell in t.OccupiedRect() )
             {
-                if( !cell.Fogged() )
+                if( !cell.Fogged( t.Map ) )
                 {
                     return true;
                 }

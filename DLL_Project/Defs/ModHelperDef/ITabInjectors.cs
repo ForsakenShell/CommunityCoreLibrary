@@ -8,7 +8,7 @@ using Verse;
 namespace CommunityCoreLibrary
 {
 
-    public class MHD_ITabs : IInjector
+    public class MHD_InspectTabBases : IInjector
     {
 
 #if DEBUG
@@ -16,23 +16,23 @@ namespace CommunityCoreLibrary
         {
             get
             {
-                return "ITabs injected";
+                return "InspectTabBases injected";
             }
         }
 
         public bool                         IsValid( ModHelperDef def, ref string errors )
         {
-            if( def.ITabs.NullOrEmpty() )
+            if( def.InspectTabBases.NullOrEmpty() )
             {
                 return true;
             }
 
             bool isValid = true;
 
-            for( var iTabIndex = 0; iTabIndex < def.ITabs.Count; iTabIndex++ )
+            for( var InspectTabBaseIndex = 0; InspectTabBaseIndex < def.InspectTabBases.Count; InspectTabBaseIndex++ )
             {
                 var qualifierValid = true;
-                var injectionSet = def.ITabs[ iTabIndex ];
+                var injectionSet = def.InspectTabBases[ InspectTabBaseIndex ];
                 if(
                     ( !injectionSet.requiredMod.NullOrEmpty() )&&
                     ( Find_Extensions.ModByName( injectionSet.requiredMod ) == null )
@@ -42,19 +42,19 @@ namespace CommunityCoreLibrary
                 }
                 var replaceTabIsValid = true;
                 if(
-                    ( injectionSet.newITab == null )||
-                    ( !injectionSet.newITab.IsSubclassOf( typeof( ITab ) ) )
+                    ( injectionSet.newInspectTabBase == null )||
+                    ( !injectionSet.newInspectTabBase.IsSubclassOf( typeof( InspectTabBase ) ) )
                 )
                 {
-                    errors += string.Format( "Unable to resolve ITab '{0}'", injectionSet.newITab );
+                    errors += string.Format("Unable to resolve InspectTabBase '{0}'", injectionSet.newInspectTabBase );
                     isValid = false;
                 }
                 if(
-                    ( injectionSet.replaceITab != null )&&
-                    ( !injectionSet.replaceITab.IsSubclassOf( typeof( ITab ) ) )
+                    ( injectionSet.replaceInspectTabBase != null )&&
+                    ( !injectionSet.replaceInspectTabBase.IsSubclassOf( typeof( InspectTabBase ) ) )
                 )
                 {
-                    errors += string.Format( "Unable to resolve ITab '{0}'", injectionSet.replaceITab );
+                    errors += string.Format("Unable to resolve InspectTabBase '{0}'", injectionSet.replaceInspectTabBase );
                     isValid = false;
                     replaceTabIsValid = false;
                 }
@@ -84,7 +84,7 @@ namespace CommunityCoreLibrary
                         {
                             if( injectionSet.targetDefs[ index ].NullOrEmpty() )
                             {
-                                errors += string.Format( "targetDef in ITabs is null or empty at index {0}", index.ToString() );
+                                errors += string.Format( "targetDef in InspectTabBases is null or empty at index {0}", index.ToString() );
                                 isValid = false;
                             }
                             else
@@ -96,13 +96,13 @@ namespace CommunityCoreLibrary
                                     isValid = false;
                                 }
                                 else if(
-                                    ( injectionSet.replaceITab != null )&&
+                                    ( injectionSet.replaceInspectTabBase != null )&&
                                     ( replaceTabIsValid )
                                 )
                                 {
-                                    if( !CanReplaceOn( thingDef, injectionSet.replaceITab ) )
+                                    if( !CanReplaceOn( thingDef, injectionSet.replaceInspectTabBase ) )
                                     {
-                                        errors += string.Format( "targetDef '{0}' does not contain ITab '{1}' to replace", injectionSet.targetDefs[ index ], injectionSet.replaceITab );
+                                        errors += string.Format("targetDef '{0}' does not contain InspectTabBase '{1}' to replace", injectionSet.targetDefs[ index ], injectionSet.replaceInspectTabBase );
                                         isValid = false;
                                     }
                                 }
@@ -117,7 +117,7 @@ namespace CommunityCoreLibrary
                             isValid = false;
                         }
                         else if(
-                                ( injectionSet.replaceITab != null )&&
+                                ( injectionSet.replaceInspectTabBase != null )&&
                                 ( replaceTabIsValid )
                             )
                         {
@@ -126,9 +126,9 @@ namespace CommunityCoreLibrary
                             {
                                 foreach( var thingDef in thingDefs )
                                 {
-                                    if( !CanReplaceOn( thingDef, injectionSet.replaceITab ) )
+                                    if( !CanReplaceOn( thingDef, injectionSet.replaceInspectTabBase ) )
                                     {
-                                        errors += string.Format( "qualified ThingDef '{0}' does not contain ITab '{1}' to replace", thingDef.defName, injectionSet.replaceITab );
+                                        errors += string.Format("qualified ThingDef '{0}' does not contain InspectTabBase '{1}' to replace", thingDef.defName, injectionSet.replaceInspectTabBase );
                                         isValid = false;
                                     }
                                 }
@@ -141,25 +141,25 @@ namespace CommunityCoreLibrary
             return isValid;
         }
 
-        private bool                        CanReplaceOn( ThingDef thingDef, Type replaceITab )
+        private bool                        CanReplaceOn( ThingDef thingDef, Type replaceInspectTabBase )
         {
             return(
                 ( !thingDef.inspectorTabs.NullOrEmpty() )&&
-                ( thingDef.inspectorTabs.Contains( replaceITab ) )
+                ( thingDef.inspectorTabs.Contains( replaceInspectTabBase ) )
             );
         }
 #endif
 
         public bool                         Injected( ModHelperDef def )
         {
-            if( def.ITabs.NullOrEmpty() )
+            if( def.InspectTabBases.NullOrEmpty() )
             {
                 return true;
             }
 
-            for( var index = 0; index < def.ITabs.Count; index++ )
+            for( var index = 0; index < def.InspectTabBases.Count; index++ )
             {
-                var injectionSet = def.ITabs[ index ];
+                var injectionSet = def.InspectTabBases[ index ];
                 if(
                     ( !injectionSet.requiredMod.NullOrEmpty() )&&
                     ( Find_Extensions.ModByName( injectionSet.requiredMod ) == null )
@@ -174,7 +174,7 @@ namespace CommunityCoreLibrary
                     {
                         if(
                             ( thingDef.inspectorTabs.NullOrEmpty() )||
-                            ( !thingDef.inspectorTabs.Contains( injectionSet.newITab ) )
+                            ( !thingDef.inspectorTabs.Contains( injectionSet.newInspectTabBase ) )
                         )
                         {
                             return false;
@@ -188,14 +188,14 @@ namespace CommunityCoreLibrary
 
         public bool                         Inject( ModHelperDef def )
         {
-            if( def.ITabs.NullOrEmpty() )
+            if( def.InspectTabBases.NullOrEmpty() )
             {
                 return true;
             }
 
-            for( var index = 0; index < def.ITabs.Count; index ++ )
+            for( var index = 0; index < def.InspectTabBases.Count; index ++ )
             {
-                var injectionSet = def.ITabs[ index ];
+                var injectionSet = def.InspectTabBases[ index ];
                 if(
                     ( !injectionSet.requiredMod.NullOrEmpty() )&&
                     ( Find_Extensions.ModByName( injectionSet.requiredMod ) == null )
@@ -208,14 +208,14 @@ namespace CommunityCoreLibrary
                 {
 #if DEBUG
                     var stringBuilder = new StringBuilder();
-                    stringBuilder.Append( "ITabs :: Qualifier returned: " );
+                    stringBuilder.Append( "InspectTabBases :: Qualifier returned: " );
 #endif
                     foreach( var thingDef in thingDefs )
                     {
 #if DEBUG
                         stringBuilder.Append( thingDef.defName + ", " );
 #endif
-                        if( !InjectITab( injectionSet.newITab, injectionSet.replaceITab, thingDef ) )
+                        if( !InjectInspectTabBase( injectionSet.newInspectTabBase, injectionSet.replaceInspectTabBase, thingDef ) )
                         {
                             return false;
                         }
@@ -230,10 +230,10 @@ namespace CommunityCoreLibrary
 
         }
 
-        private bool                        InjectITab( Type newITab, Type replaceITab, ThingDef thingDef )
+        private bool                        InjectInspectTabBase( Type newInspectTabBase, Type replaceInspectTabBase, ThingDef thingDef )
         {
-            var injectedITab = (ITab) Activator.CreateInstance( newITab );
-            if( injectedITab == null )
+            var injectedInspectTabBase = (InspectTabBase) Activator.CreateInstance( newInspectTabBase );
+            if( injectedInspectTabBase == null )
             {
                 return false;
             }
@@ -243,21 +243,21 @@ namespace CommunityCoreLibrary
             }
             if( thingDef.inspectorTabsResolved.NullOrEmpty() )
             {
-                thingDef.inspectorTabsResolved = new List<ITab>();
+                thingDef.inspectorTabsResolved = new List<InspectTabBase>();
             }
-            var injectTypeAt = replaceITab == null
+            var injectTypeAt = replaceInspectTabBase == null
                 ? thingDef.inspectorTabs.Count
-                : thingDef.inspectorTabs.IndexOf( replaceITab );
-            var injectResolvedAt = replaceITab == null
+                : thingDef.inspectorTabs.IndexOf( replaceInspectTabBase );
+            var injectResolvedAt = replaceInspectTabBase == null
                 ? thingDef.inspectorTabsResolved.Count
-                : thingDef.inspectorTabsResolved.FindIndex( r => r.GetType() == replaceITab );
-            if( replaceITab != null )
+                : thingDef.inspectorTabsResolved.FindIndex( r => r.GetType() == replaceInspectTabBase );
+            if( replaceInspectTabBase != null )
             {
                 thingDef.inspectorTabs.RemoveAt( injectTypeAt );
                 thingDef.inspectorTabsResolved.RemoveAt( injectResolvedAt );
             }
-            thingDef.inspectorTabs.Insert( injectTypeAt, newITab );
-            thingDef.inspectorTabsResolved.Insert( injectResolvedAt, injectedITab );
+            thingDef.inspectorTabs.Insert( injectTypeAt, newInspectTabBase );
+            thingDef.inspectorTabsResolved.Insert( injectResolvedAt, injectedInspectTabBase );
             return true;
         }
 

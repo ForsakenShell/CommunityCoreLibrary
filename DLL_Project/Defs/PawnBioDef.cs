@@ -34,7 +34,8 @@ namespace CommunityCoreLibrary
                 return;
             }
 
-            Backstory childhood = BackstoryDatabase.GetWithKey(this.childhoodDef.UniqueSaveKey());
+            Backstory childhood;
+            BackstoryDatabase.TryGetWithIdentifier(this.childhoodDef.UniqueSaveKey(), out childhood);
             if (childhood != null)
             {
                 bio.childhood = childhood;
@@ -47,7 +48,8 @@ namespace CommunityCoreLibrary
                 return;
             }
 
-            Backstory adulthood = BackstoryDatabase.GetWithKey(this.adulthoodDef.UniqueSaveKey());
+            Backstory adulthood;
+            BackstoryDatabase.TryGetWithIdentifier(this.childhoodDef.UniqueSaveKey(), out adulthood);
             if (adulthood != null)
             {
                 bio.adulthood = adulthood;

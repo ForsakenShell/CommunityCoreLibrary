@@ -21,6 +21,8 @@ namespace CommunityCoreLibrary
 
         private static Dictionary<IntVec3,Thing> hiderBuildings;
 
+        public HideItemManager( Map map ) : base( map ) { }
+
         static HideItemManager()
         {
             itemHide = new List<Thing>();

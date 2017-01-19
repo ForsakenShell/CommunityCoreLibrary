@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace CommunityCoreLibrary
 {
     
-    public struct ITabInjectionSet
+    public struct InspectTabBaseInjectionSet
     {
 
         public string                       requiredMod;
 
-        public Type                         newITab;
-        public Type                         replaceITab;
+        public Type                         newInspectTabBase;
+        public Type                         replaceInspectTabBase;
 
         public List< string >               targetDefs;
 

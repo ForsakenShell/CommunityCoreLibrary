@@ -172,7 +172,7 @@ namespace CommunityCoreLibrary
                 {
                     if( ReverseDesignatorDatabase_Extensions.Find( injectionSet.designatorClass ) == null )
                     {
-                        ReverseDesignatorDatabase.AllDesignators.Add( (Designator) Activator.CreateInstance( injectionSet.designatorClass ) );
+                        Find.ReverseDesignatorDatabase.AllDesignators.Add( (Designator) Activator.CreateInstance( injectionSet.designatorClass ) );
                     }
                 }
             }
