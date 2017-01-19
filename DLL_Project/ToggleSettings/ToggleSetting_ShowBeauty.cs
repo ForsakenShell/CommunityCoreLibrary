@@ -5,7 +5,8 @@ using Verse;
 
 namespace CommunityCoreLibrary
 {
-    
+
+    // TODO: replace this (probably ShowEnvironment)
     public class ToggleSetting_ShowBeauty : ToggleSetting
     {
 
@@ -13,11 +14,11 @@ namespace CommunityCoreLibrary
         {
             get
             {
-                return Find.PlaySettings.showBeauty;
+                return Find.PlaySettings.showEnvironment;
             }
             set
             {
-                Find.PlaySettings.showBeauty = value;
+                Find.PlaySettings.showEnvironment = value;
             }
         }
 

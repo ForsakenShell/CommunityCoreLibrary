@@ -65,13 +65,9 @@ namespace CommunityCoreLibrary.Detour
                 
             case ThingRequestGroup.HaulableAlways:
                 return def.alwaysHaulable;
-                
-            case ThingRequestGroup.CultivatedPlant:
-                if( def.category == ThingCategory.Plant )
-                {
-                    return (double) Find.Map.Biome.CommonalityOfPlant( def ) == 0.0;
-                }
-                return false;
+
+            case ThingRequestGroup.Plant:
+                return def.category == ThingCategory.Plant;
                 
             case ThingRequestGroup.FoodSource:
                 if( !def.IsNutritionGivingIngestible )

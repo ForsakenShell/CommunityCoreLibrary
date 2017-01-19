@@ -91,7 +91,7 @@ namespace CommunityCoreLibrary
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if(
-                ( parent.Position.IsInRoom() )&&
+                ( parent.Position.IsInRoom( this.parent.Map ) )&&
                 ( parent.IsSameThingCompInRoom( GetType() ) )
             )
             {

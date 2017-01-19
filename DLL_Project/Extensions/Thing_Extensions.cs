@@ -350,7 +350,7 @@ namespace CommunityCoreLibrary
                 // Get adjacent cells bound by room
                 cells = GenAdj.CellsAdjacentCardinal( thing )
                     .Where( c =>
-                        ( c.GetRoom() == thing.GetRoom() )
+                        ( GridsUtility.GetRoom( thing ) == GridsUtility.GetRoom( c, thing.Map ) )
                     )
                     .ToList();
             }

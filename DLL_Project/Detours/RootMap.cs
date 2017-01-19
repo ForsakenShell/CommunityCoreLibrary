@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Reflection;
 
+using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -9,57 +10,36 @@ namespace CommunityCoreLibrary.Detour
     
     internal class _RootMap : Verse.Root
     {
-
-        internal static MethodInfo          _ErrorWhileLoadingMap;
-        internal static MethodInfo          _ErrorWhileGeneratingMap;
-
-        static                              _RootMap()
-        {
-            _ErrorWhileLoadingMap = typeof( RootMap ).GetMethod( "ErrorWhileLoadingMap", Controller.Data.UniversalBindingFlags );
-            if( _ErrorWhileLoadingMap == null )
-            {
-                CCL_Log.Trace(
-                    Verbosity.FatalErrors,
-                    "Unable to get field 'ErrorWhileLoadingMap' in 'RootMap'",
-                    "Detour.RootMap" );
-            }
-            _ErrorWhileGeneratingMap = typeof( RootMap ).GetMethod( "ErrorWhileGeneratingMap", Controller.Data.UniversalBindingFlags );
-            if( _ErrorWhileGeneratingMap == null )
-            {
-                CCL_Log.Trace(
-                    Verbosity.FatalErrors,
-                    "Unable to get field 'ErrorWhileGeneratingMap' in 'RootMap'",
-                    "Detour.RootMap" );
-            }
-        }
+        public MusicManagerPlay musicManagerPlay;
 
         internal void                       ErrorWhileLoadingMap( Exception e )
         {
-            _ErrorWhileLoadingMap.Invoke( this, new[] { e } );
+            GameAndMapInitExceptionHandlers.ErrorWhileGeneratingMap(e);
         }
 
         internal void                       ErrorWhileGeneratingMap( Exception e )
         {
-            _ErrorWhileGeneratingMap.Invoke( this, new[] { e } );
+            GameAndMapInitExceptionHandlers.ErrorWhileGeneratingMap(e);
         }
 
-        [DetourMember( typeof( RootMap ) )]
+        [DetourMember( typeof( Root_Play ) )]
         internal void                       _Start()
         {
             // Do subcontroller preload
             Controller.SubControllers.PreLoad();
             // Root.Start()
             base.Start();
+            this.musicManagerPlay = new MusicManagerPlay();
             // RootMap.Start()
-            if(
+            if (
                 ( Find.GameInitData != null )&&
-                ( !Find.GameInitData.mapToLoad.NullOrEmpty() )
+                ( !Find.GameInitData.gameToLoad.NullOrEmpty() )
             )
             {
                 LongEventHandler.QueueLongEvent(
                     () =>
                 {
-                    SavedGameLoader.LoadGameFromSaveFile( Find.GameInitData.mapToLoad );
+                    SavedGameLoader.LoadGameFromSaveFile( Find.GameInitData.gameToLoad );
                 },
                     "LoadingLongEvent",
                     true,
@@ -69,7 +49,14 @@ namespace CommunityCoreLibrary.Detour
             else
             {
                 LongEventHandler.QueueLongEvent(
-                    MapIniter_NewGame.InitNewGeneratedMap,
+                    () =>
+                {
+                    if (Current.Game == null)
+                    {
+                        SetupForQuickTestPlay();
+                    }
+                    Current.Game.InitNewGame();
+                },
                     "GeneratingMap",
                     true,
                     ErrorWhileGeneratingMap
@@ -86,7 +73,23 @@ namespace CommunityCoreLibrary.Detour
                 null
             );
         }
-
+        
+        private static void SetupForQuickTestPlay()
+        {
+            Current.ProgramState = ProgramState.Entry;
+            Current.Game = new Game();
+            Current.Game.InitData = new GameInitData();
+            Current.Game.Scenario = ScenarioDefOf.Crashlanded.scenario;
+            Find.Scenario.PreConfigure();
+            Current.Game.storyteller = new Storyteller(StorytellerDefOf.Cassandra, DifficultyDefOf.Hard);
+            Current.Game.World = WorldGenerator.GenerateWorld(0.05f, GenText.RandomSeedString(), OverallRainfall.Normal, OverallTemperature.Normal);
+            Rand.RandomizeSeedFromTime();
+            Find.Scenario.PostWorldLoad();
+            Find.GameInitData.ChooseRandomStartingTile();
+            Find.GameInitData.mapSize = 150;
+            Find.GameInitData.PrepForMapGen();
+            Find.Scenario.PreMapGenerate();
+        }
     }
 
 }

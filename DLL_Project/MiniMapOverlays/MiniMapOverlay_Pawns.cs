@@ -46,7 +46,7 @@ namespace CommunityCoreLibrary.MiniMap
 			for( int i = 0; i < count; i++ )
 			{
 				// paint it black!
-				if( cells[ i ].InBounds() )
+				if( cells[ i ].InBounds( Find.VisibleMap ) )
 				{
 					texture.SetPixel( cells[ i ].x, cells[ i ].z, transparentEdges && i > opaqueCount ? transparentColor : opaqueColor );
 				}

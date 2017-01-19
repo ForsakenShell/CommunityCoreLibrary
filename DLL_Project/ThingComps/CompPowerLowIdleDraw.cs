@@ -341,7 +341,7 @@ namespace CommunityCoreLibrary
     						}
 
     						// Look for a new user...
-                            var pUser = Find.ThingGrid.ThingsAt( scanPosition[0 ] ).FirstOrDefault( t => (
+                            var pUser = parent.Map.thingGrid.ThingsAt( scanPosition[0 ] ).FirstOrDefault( t => (
                                ( t is Pawn )&&
                                ( parent.PawnHasJobUsing( (Pawn)t ) )
                                ) ) as Pawn;

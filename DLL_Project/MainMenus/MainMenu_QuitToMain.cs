@@ -11,26 +11,25 @@ namespace CommunityCoreLibrary
 		public override bool RenderNow( bool anyMapFiles )
 		{
             return(
-                ( Current.ProgramState == ProgramState.MapPlaying )&&
+                ( Current.ProgramState == ProgramState.Playing )&&
                 ( !Current.Game.Info.permadeathMode )
             );
 		}
 
 		public override void ClickAction()
 		{
-            if( GameDataSaveLoader.CurrentMapStateIsValuable )
+            if( GameDataSaveLoader.CurrentGameStateIsValuable )
             {
-    			Find.WindowStack.Add( (Window)new Dialog_Confirm(
+                Find.WindowStack.Add( Dialog_MessageBox.CreateConfirmation(
     				"ConfirmQuit".Translate(),
-    				RootMap.GoToMainMenu,
+    				GenScene.GoToMainMenu,
     				true,
-                    null,
-                    true
+                    null
     			) );
             }
             else
             {
-                RootMap.GoToMainMenu();
+                GenScene.GoToMainMenu();
             }
 		}
 

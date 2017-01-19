@@ -94,9 +94,9 @@ namespace CommunityCoreLibrary.Detour
             yield return Toils_Reserve.Reserve( IngestibleInd, 1 );
             this.AddFinishAction( () =>
             {   // Release on early exit
-                if( Find.Reservations.ReservedBy( ingestibleSource, pawn ) )
+                if( pawn.Map.reservationManager.ReservedBy( ingestibleSource, pawn ) )
                 {
-                    Find.Reservations.Release( ingestibleSource, pawn );
+                    pawn.Map.reservationManager.Release( ingestibleSource, pawn );
                 }
             } );
 

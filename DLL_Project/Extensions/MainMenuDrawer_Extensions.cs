@@ -436,7 +436,7 @@ namespace CommunityCoreLibrary
                                 Prefs.Save();
                             }
                         },
-                            MenuOptionPriority.Medium )
+                            MenuOptionPriority.Default )
                         );
                     }
                     Find.WindowStack.Add( new FloatMenu( languageOptions ) );

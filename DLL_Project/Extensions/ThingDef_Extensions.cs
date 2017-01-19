@@ -38,7 +38,7 @@ namespace CommunityCoreLibrary
 
             if(
                 ( !validateBills )||
-                ( Current.ProgramState != ProgramState.MapPlaying )
+                ( Current.ProgramState != ProgramState.Playing )
             )
             {
                 return;
@@ -48,7 +48,10 @@ namespace CommunityCoreLibrary
             var recipes = thingDef.AllRecipes;
 
             // Remove bill on any table of this def using invalid recipes
-            var buildings = Find.ListerBuildings.AllBuildingsColonistOfDef( thingDef );
+            var buildings = from map in Find.Maps
+                            from building in map.listerBuildings.AllBuildingsColonistOfDef( thingDef )
+                            select building;
+
             foreach( var building in buildings )
             {
                 var iBillGiver = building as IBillGiver;

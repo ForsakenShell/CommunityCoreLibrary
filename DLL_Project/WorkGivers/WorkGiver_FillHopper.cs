@@ -69,7 +69,7 @@ namespace CommunityCoreLibrary
 
         private static Thing                HopperGetCurrentResource( IntVec3 position, ISlotGroupParent hopperSgp )
         {
-            var list = Find.ThingGrid.ThingsListAt( position ).Where( t => (
+            var list = hopperSgp.Map.thingGrid.ThingsListAt( position ).Where( t => (
                 ( !HopperDefs.Contains( t.def ) )&&
                 ( hopperSgp.GetStoreSettings().AllowedToAccept( t ) )
             ) ).ToList();

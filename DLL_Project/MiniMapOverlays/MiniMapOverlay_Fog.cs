@@ -26,13 +26,13 @@ namespace CommunityCoreLibrary.MiniMap
 		public override void Update()
 		{
 			// get the fog grid
-			var fog = Find.Map.fogGrid.fogGrid;
+			var fog = Find.VisibleMap.fogGrid.fogGrid;
 
 			// loop over all cells
-			for( int i = 0; i < CellIndices.NumGridCells; i++ )
+			for( int i = 0; i < Find.VisibleMap.cellIndices.NumGridCells; i++ )
 			{
 				// set pixel color
-				var pos = CellIndices.IndexToCell( i );
+				var pos = Find.VisibleMap.cellIndices.IndexToCell( i );
 				texture.SetPixel( pos.x, pos.z, fog[ i ] ? Color.gray : Color.clear );
 			}
 		}

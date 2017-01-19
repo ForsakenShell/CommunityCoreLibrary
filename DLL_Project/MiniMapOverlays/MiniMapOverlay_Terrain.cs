@@ -27,10 +27,10 @@ namespace CommunityCoreLibrary.MiniMap
 		public override void Update()
 		{
 			// update all cells
-			for( int i = 0; i < CellIndices.NumGridCells; i++ )
+			for( int i = 0; i < Find.VisibleMap.cellIndices.NumGridCells; i++ )
 			{
 				// get x,y position from index
-				var position = CellIndices.IndexToCell( i );
+				var position = Find.VisibleMap.cellIndices.IndexToCell( i );
 
 				// paint it... brownish?
 				texture.SetPixel( position.x, position.z, Find.Map.terrainGrid.TerrainAt( i ).color );

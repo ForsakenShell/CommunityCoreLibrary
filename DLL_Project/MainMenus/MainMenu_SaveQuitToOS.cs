@@ -19,7 +19,7 @@ namespace CommunityCoreLibrary
         public override bool RenderNow( bool anyMapFiles )
         {
             return(
-                ( Current.ProgramState == ProgramState.MapPlaying )&&
+                ( Current.ProgramState == ProgramState.Playing )&&
                 ( Current.Game.Info.permadeathMode )
             );
         }

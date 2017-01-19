@@ -54,9 +54,9 @@ namespace CommunityCoreLibrary.Detour
                 )&&
                 (
                     ( pawn.Position.InHorDistOf( drugSource.Position, 60f ) )||
-                    ( drugSource.Position.Roofed() )||
-                    ( Find.AreaHome[ drugSource.Position ] )||
-                    ( drugSource.Position.GetSlotGroup() != null )
+                    ( drugSource.Position.Roofed( drugSource.Map ) )||
+                    ( drugSource.Map.areaManager.Home[ drugSource.Position ] )||
+                    ( StoreUtility.GetSlotGroup( drugSource ) != null )
                 )
             );
         }

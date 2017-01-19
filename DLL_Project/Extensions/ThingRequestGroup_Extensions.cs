@@ -13,7 +13,10 @@ namespace CommunityCoreLibrary
 
         public static List<Thing>           ListOfThingsByGroup( this ThingRequestGroup group )
         {
-            var listsByGroup = Find.ListerThings.ListsByGroup();
+            var listsByGroup = from map in Find.Maps
+                               from list in map.listerThings.ListsByGroup()
+                               select list;
+
             return listsByGroup[ (int) group ];
         }
 

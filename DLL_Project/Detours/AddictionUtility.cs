@@ -58,7 +58,7 @@ namespace CommunityCoreLibrary.Detour
                 return false;
             }
             // Check all spawned drugs
-            var listOfSpawnedDrugs = Find.ListerThings.ThingsInGroup( ThingRequestGroup.Drug );
+            var listOfSpawnedDrugs = pawn.Map.listerThings.ThingsInGroup( ThingRequestGroup.Drug );
             for( int index = 0; index < listOfSpawnedDrugs.Count; ++index )
             {
                 var thing = listOfSpawnedDrugs[ index ];

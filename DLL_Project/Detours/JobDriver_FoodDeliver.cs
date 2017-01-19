@@ -41,9 +41,9 @@ namespace CommunityCoreLibrary.Detour
                 yield return Toils_Reserve.Reserve( FoodInd, 1 );
                 this.AddFinishAction( () =>
                 {
-                    if( Find.Reservations.ReservedBy( foodThing, pawn ) )
+                    if( pawn.Map.reservationManager.ReservedBy( foodThing, pawn ) )
                     {   // Release reservation if aborted early
-                        Find.Reservations.Release( foodThing, pawn );
+                        pawn.Map.reservationManager.Release( foodThing, pawn );
                     }
                 } );
                 yield return Toils_Goto.GotoThing( FoodInd, PathEndMode.InteractionCell ).FailOnForbidden( FoodInd );
@@ -69,9 +69,9 @@ namespace CommunityCoreLibrary.Detour
                 yield return Toils_Goto.GotoThing( FoodInd, PathEndMode.ClosestTouch ).FailOnForbidden( FoodInd );
                 this.AddFinishAction( () =>
                 {
-                    if( Find.Reservations.ReservedBy( foodThing, pawn ) )
+                    if( pawn.Map.reservationManager.ReservedBy( foodThing, pawn ) )
                     {   // Release reservation if aborted early
-                        Find.Reservations.Release( foodThing, pawn );
+                        pawn.Map.reservationManager.Release( foodThing, pawn );
                     }
                 } );
                 yield return Toils_Ingest.PickupIngestible( FoodInd, deliveree );

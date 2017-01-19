@@ -113,7 +113,7 @@ namespace CommunityCoreLibrary.MiniMap
                 var position = new Vector2( mouse.x, inRect.height - mouse.y );
 
                 // calculate scale
-                var scale = new Vector2( Find.Map.Size.x / inRect.width, Find.Map.Size.z / inRect.height );
+                var scale = new Vector2( Find.VisibleMap.Size.x / inRect.width, Find.VisibleMap.Size.z / inRect.height );
 
                 // jump map
                 Find.CameraDriver.JumpTo( new Vector3( position.x * scale.x, 0f, position.y * scale.y ) );

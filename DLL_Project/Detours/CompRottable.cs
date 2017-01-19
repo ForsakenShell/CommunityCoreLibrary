@@ -50,11 +50,11 @@ namespace CommunityCoreLibrary.Detour
             get
             {
                 var checkPos = this.parent.PositionHeld;
-                if( !checkPos.InBounds() )
+                if( !checkPos.InBounds( parent.Map ) )
                 {
                     return null;
                 }
-                var refrigerator = checkPos.GetThingList().FirstOrDefault( t => (
+                var refrigerator = checkPos.GetThingList( parent.Map ).FirstOrDefault( t => (
                     ( t.TryGetComp<CompRefrigerated>() != null )
                 ) );
                 return refrigerator?.TryGetComp<CompRefrigerated>();

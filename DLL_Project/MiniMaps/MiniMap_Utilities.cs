@@ -22,7 +22,7 @@ namespace CommunityCoreLibrary.MiniMap
                 if ( _clearPixelArray == null )
                 {
                     // create a clear pixel array for resetting textures
-                    _clearPixelArray = new Color[Find.Map.Size.x * Find.Map.Size.z];
+                    _clearPixelArray = new Color[Find.VisibleMap.Size.x * Find.VisibleMap.Size.z];
                     for ( int i = 0; i < _clearPixelArray.Count(); i++ )
                     {
                         _clearPixelArray[i] = Color.clear;

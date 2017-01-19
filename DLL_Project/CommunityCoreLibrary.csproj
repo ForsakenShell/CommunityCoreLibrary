@@ -126,7 +126,6 @@
     <Compile Include="Verbs\Verb_ShootExtended.cs" />
     <Compile Include="Extensions\ResearchProjectDef_Extensions.cs" />
     <Compile Include="Extensions\RecipeDef_Extensions.cs" />
-    <Compile Include="Extensions\ReverseDesignatorDatabase_Extensions.cs" />
     <Compile Include="Alerts\Alert_BuildingNeedsHopper.cs" />
     <Compile Include="Alerts\Alert_HopperNeedsBuilding.cs" />
     <Compile Include="Buildings\Building_Hopper.cs" />
@@ -361,7 +360,5 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Detours\Developer\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

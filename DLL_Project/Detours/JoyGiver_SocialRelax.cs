@@ -90,7 +90,9 @@ namespace CommunityCoreLibrary.Detour
         [DetourMember]
         internal Job                        _TryGiveJobInt( Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator )
         {
-            if( GatherSpotLister.activeSpots.NullOrEmpty() )
+            var lister = pawn.Map.gatherSpotLister;
+
+            if (lister.activeSpots.NullOrEmpty() )
             {
                 return null;
             }
@@ -100,9 +102,9 @@ namespace CommunityCoreLibrary.Detour
             var RadialPatternMiddleOutward = JoyGiver_SocialRelax_Extensions.RadialPatternMiddleOutward();
 
             workingSpots.Clear();
-            for( int index = 0; index < GatherSpotLister.activeSpots.Count; index++ )
+            for( int index = 0; index < lister.activeSpots.Count; ++index )
             {
-                workingSpots.Add( GatherSpotLister.activeSpots[ index ] );
+                workingSpots.Add(lister.activeSpots[ index ] );
             }
 
             CompGatherSpot compGatherSpot;
@@ -164,11 +166,11 @@ namespace CommunityCoreLibrary.Detour
                                 {   // Couldn't reserve the synthesizer for production
                                     return null;
                                 }
-                                job.maxNumToCarry = 1;
+                                job.count = 1;
                             }
                             else
                             {
-                                job.maxNumToCarry = Mathf.Min( drugSource.stackCount, drugSource.def.ingestible.maxNumToIngestAtOnce );
+                                job.count = Mathf.Min( drugSource.stackCount, drugSource.def.ingestible.maxNumToIngestAtOnce );
                             }
 
                         }

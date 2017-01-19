@@ -172,7 +172,7 @@ namespace CommunityCoreLibrary
                 //Log.Message( string.Format( "{0}.CompHopperUser.AdjCellsCardinalInBounds", this.parent.ThingID ) );
                 if( cachedAdjCellsCardinal == null )
                 {
-                    cachedAdjCellsCardinal = GenAdj.CellsAdjacentCardinal( parent ).Where( c => c.InBounds() ).ToList();
+                    cachedAdjCellsCardinal = GenAdj.CellsAdjacentCardinal( parent ).Where( c => c.InBounds( this.parent.Map ) ).ToList();
                 }
                 return cachedAdjCellsCardinal;
             }

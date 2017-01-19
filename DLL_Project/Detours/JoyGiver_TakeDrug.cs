@@ -19,14 +19,14 @@ namespace CommunityCoreLibrary.Detour
         internal Thing                      _BestIngestItem( Pawn pawn, Predicate<Thing> extraValidator )
         {
             Predicate<Thing> validator = (Thing t) => (
-                ( this.CanUseIngestItemForJoy( pawn, t ) )&&
+                ( this.CanIngestForJoy( pawn, t ) )&&
                 (
                     ( extraValidator == null )||
                     ( extraValidator( t ) )
                 )
             );
 
-            var container = pawn.inventory.container;
+            var container = pawn.inventory.innerContainer;
             for( int index = 0; index < container.Count; index++ )
             {
                 var containerItem = container[ index ];

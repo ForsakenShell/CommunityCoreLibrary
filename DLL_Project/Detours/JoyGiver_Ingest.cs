@@ -49,15 +49,15 @@ namespace CommunityCoreLibrary.Detour
         {
             Predicate<Thing> validator = (Thing t) =>
             (
-                ( this.CanUseIngestItemForJoy( pawn, t ) )&&
+                ( this.CanIngestForJoy( pawn, t ) )&&
                 (
                     ( extraValidator == null )||
                     ( extraValidator( t ) )
                 )
             );
             
-            var container = pawn.inventory.container;
-            for( int index = 0; index < container.Count; index++ )
+            var container = pawn.inventory.innerContainer;
+            for( int index = 0; index < innerContainer.Count; index++ )
             {
                 var containerItem = container[ index ];
                 if(
@@ -68,13 +68,14 @@ namespace CommunityCoreLibrary.Detour
                     return containerItem;
                 }
             }
-            var searchSet = this.SearchSet;
+            var searchSet = this.GetSearchSet( pawn );
             if( searchSet.Count < 1 )
             {
                 return null;
             }
             return GenClosest.ClosestThing_Global_Reachable(
                 pawn.Position,
+                pawn.Map,
                 searchSet,
                 PathEndMode.InteractionCell,
                 TraverseParms.For(

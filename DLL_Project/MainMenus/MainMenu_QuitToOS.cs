@@ -30,17 +30,16 @@ namespace CommunityCoreLibrary
 		public override void ClickAction()
 		{
 			if(
-                ( Current.ProgramState == ProgramState.MapPlaying )&&
-			( GameDataSaveLoader.CurrentMapStateIsValuable )
+                ( Current.ProgramState == ProgramState.Playing )&&
+			( GameDataSaveLoader.CurrentGameStateIsValuable )
             )
             {
-				Find.WindowStack.Add( (Window)new Dialog_Confirm(
-					"ConfirmQuit".Translate(),
-					Root.Shutdown,
-					true,
-                    null,
-                    true
-				) );
+                Find.WindowStack.Add( Dialog_MessageBox.CreateConfirmation(
+    				"ConfirmQuit".Translate(),
+    				GenScene.GoToMainMenu,
+    				true,
+                    null
+    			) );
             }
             else
 			{

@@ -221,7 +221,7 @@ namespace CommunityCoreLibrary
                 // Get list of things
                 var thingDefs =
                     DefDatabase< ThingDef >.AllDefsListForReading.Where( t => (
-                        ( t.designationCategory == designationCategoryDef.defName )
+                        ( t.designationCategory.defName == designationCategoryDef.defName )
                         && ( !t.IsLockedOut() )
                     ) ).ToList();
 
@@ -247,8 +247,8 @@ namespace CommunityCoreLibrary
                     ( t.Minifiable )&&
                     (
                         (
-                            ( t.designationCategory.NullOrEmpty() )||
-                            ( t.designationCategory == "None" )
+                            ( t.designationCategory == null ) ||
+                            ( t.designationCategory.defName == "None" )
                         )
                     )&&
                     ( !t.IsLockedOut() )
@@ -282,8 +282,9 @@ namespace CommunityCoreLibrary
             List<TerrainDef> terrainDefs =
                 DefDatabase<TerrainDef>.AllDefsListForReading
                                        .Where( 
-                                            // not buildable
-                                            t => String.IsNullOrEmpty( t.designationCategory )
+                                            // not buildable #TODO: figure out if this is the right way to check this
+                                            t => ( t.designationCategory == null ||
+                                                   t.designationCategory.defName.ToLower() == "none" )
                                             && (
                                                 // is a type generated from rock
                                                 rockySuffixes.Any( s => t.defName.EndsWith( s ) )
@@ -307,7 +308,7 @@ namespace CommunityCoreLibrary
             foreach ( var categoryDef in DefDatabase<DesignationCategoryDef>.AllDefsListForReading )
             {
                 terrainDefs =
-                    DefDatabase<TerrainDef>.AllDefsListForReading.Where( t => t.designationCategory == categoryDef.defName ).ToList();
+                    DefDatabase<TerrainDef>.AllDefsListForReading.Where( t => t.designationCategory.defName == categoryDef.defName ).ToList();
 
                 if( !terrainDefs.NullOrEmpty() )
                 {

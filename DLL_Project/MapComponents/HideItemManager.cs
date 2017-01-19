@@ -58,7 +58,7 @@ namespace CommunityCoreLibrary
             {
                 foreach( var item in itemHide )
                 {
-                    Find.DynamicDrawManager.DeRegisterDrawable( item );
+                    map.dynamicDrawManager.DeRegisterDrawable( item );
                     if( ThingRequestGroup.HasGUIOverlay.Includes( item.def ) )
                     {
                         groupList.Remove( item );
@@ -71,7 +71,7 @@ namespace CommunityCoreLibrary
             {
                 foreach( var item in itemShow )
                 {
-                    Find.DynamicDrawManager.RegisterDrawable( item );
+                    map.dynamicDrawManager.RegisterDrawable( item );
                     if( ThingRequestGroup.HasGUIOverlay.Includes( item.def ) )
                     {
                         groupList.AddUnique( item );
