@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-
 using RimWorld;
 using Verse;
 using Verse.AI;
@@ -11,18 +10,89 @@ using UnityEngine;
 namespace CommunityCoreLibrary.Detour
 {
 
-    internal static class _JoyGiver_SocialRelax
+    internal class _JoyGiver_SocialRelax : JoyGiver_SocialRelax
     {
+
+        internal static MethodInfo          _TryFindChairBesideTable;
+        internal static MethodInfo          _TryFindChairNear;
+        internal static MethodInfo          _TryFindSitSpotOnGroundNear;
+
+        static                              _JoyGiver_SocialRelax()
+        {
+            _TryFindChairBesideTable = typeof( JoyGiver_SocialRelax ).GetMethod( "TryFindChairBesideTable", Controller.Data.UniversalBindingFlags );
+            if( _TryFindChairBesideTable == null )
+            {
+                CCL_Log.Trace(
+                    Verbosity.FatalErrors,
+                    "Unable to get method 'TryFindChairBesideTable' in 'JoyGiver_SocialRelax'",
+                    "Detour.JoyGiver_SocialRelax" );
+            }
+            _TryFindChairNear = typeof( JoyGiver_SocialRelax ).GetMethod( "TryFindChairNear", Controller.Data.UniversalBindingFlags );
+            if( _TryFindChairNear == null )
+            {
+                CCL_Log.Trace(
+                    Verbosity.FatalErrors,
+                    "Unable to get method 'TryFindChairNear' in 'JoyGiver_SocialRelax'",
+                    "Detour.JoyGiver_SocialRelax" );
+            }
+            _TryFindSitSpotOnGroundNear = typeof( JoyGiver_SocialRelax ).GetMethod( "TryFindSitSpotOnGroundNear", Controller.Data.UniversalBindingFlags );
+            if( _TryFindSitSpotOnGroundNear == null )
+            {
+                CCL_Log.Trace(
+                    Verbosity.FatalErrors,
+                    "Unable to get method 'TryFindSitSpotOnGroundNear' in 'JoyGiver_SocialRelax'",
+                    "Detour.JoyGiver_SocialRelax" );
+            }
+        }
+
+        #region Reflected Methods
+
+        internal static bool                TryFindChairBesideTable( Thing table, Pawn sitter, out Thing chair )
+        {
+            chair = null;
+            var args = new object[] { table, sitter, chair };
+            if( (bool)_TryFindChairBesideTable.Invoke( null, args ) )
+            {
+                chair = (Thing) args[2];
+                return true;
+            }
+            return false;
+        }
+
+        internal static bool                TryFindChairNear( IntVec3 center, Pawn sitter, out Thing chair )
+        {
+            chair = null;
+            var args = new object[] { center, sitter, chair };
+            if( (bool)_TryFindChairNear.Invoke( null, args ) )
+            {
+                chair = (Thing) args[2];
+                return true;
+            }
+            return false;
+        }
+
+        internal static bool                TryFindSitSpotOnGroundNear( IntVec3 center, Pawn sitter, out IntVec3 result )
+        {
+            result = IntVec3.Invalid;
+            var args = new object[] { center, sitter, result };
+            if( (bool)_TryFindChairNear.Invoke( null, args ) )
+            {
+                result = (IntVec3) args[2];
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
 
         #region Detoured Methods
 
-        internal static Job _TryGiveJobInt( this JoyGiver_SocialRelax obj, Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator )
+        [DetourMember]
+        internal Job                        _TryGiveJobInt( Pawn pawn, Predicate<CompGatherSpot> gatherSpotValidator )
         {
-            var lister = pawn.Map.gatherSpotLister;
-
-            if (lister.activeSpots.NullOrEmpty() )
+            if( GatherSpotLister.activeSpots.NullOrEmpty() )
             {
-                return (Job)null;
+                return null;
             }
 
             var workingSpots = JoyGiver_SocialRelax_Extensions.WorkingSpots();
@@ -30,13 +100,13 @@ namespace CommunityCoreLibrary.Detour
             var RadialPatternMiddleOutward = JoyGiver_SocialRelax_Extensions.RadialPatternMiddleOutward();
 
             workingSpots.Clear();
-            for( int index = 0; index < lister.activeSpots.Count; ++index )
+            for( int index = 0; index < GatherSpotLister.activeSpots.Count; index++ )
             {
-                workingSpots.Add(lister.activeSpots[ index ] );
+                workingSpots.Add( GatherSpotLister.activeSpots[ index ] );
             }
 
             CompGatherSpot compGatherSpot;
-            while( GenCollection.TryRandomElement<CompGatherSpot>( workingSpots, out compGatherSpot ) )
+            while( workingSpots.TryRandomElement( out compGatherSpot ) )
             {
                 workingSpots.Remove( compGatherSpot );
                 if(
@@ -45,7 +115,7 @@ namespace CommunityCoreLibrary.Detour
                         compGatherSpot.parent,
                         PathEndMode.Touch,
                         Danger.None,
-                        false ) )&&
+                        false ) ) &&
                     ( compGatherSpot.parent.IsSociallyProper( pawn ) )&&
                     (
                         ( gatherSpotValidator == null )||
@@ -56,126 +126,57 @@ namespace CommunityCoreLibrary.Detour
                     var job = (Job)null;
                     if( compGatherSpot.parent.def.surfaceType == SurfaceType.Eat )
                     {
-                        for( int index = 0; index < 30; ++index )
+                        Thing chair;
+                        if( !TryFindChairBesideTable( compGatherSpot.parent, pawn, out chair ) )
                         {
-                            Building sittableThing = compGatherSpot.parent.RandomAdjacentCellCardinal().GetEdifice( compGatherSpot.parent.Map );
-                            if(
-                                ( sittableThing != null )&&
-                                ( sittableThing.def.building.isSittable )&&
-                                ( pawn.CanReserve( sittableThing, 1 ) )
-                            )
-                            {
-                                job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, sittableThing );
-                            }
+                            return null;
                         }
+                        job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, chair );
                     }
                     else
                     {
-                        for( int index = 0; index < RadialPatternMiddleOutward.Count; ++index )
+                        Thing chair;
+                        if( TryFindChairNear( compGatherSpot.parent.Position, pawn, out chair ) )
                         {
-                            Building sittableThing = ( compGatherSpot.parent.Position + RadialPatternMiddleOutward[ index ] )
-                                .GetEdifice( compGatherSpot.parent.Map );
-                            if(
-                                ( sittableThing != null )&&
-                                ( sittableThing.def.building.isSittable )&&
-                                (
-                                    ( pawn.CanReserve(sittableThing, 1 ) )&&
-                                    ( !sittableThing.IsForbidden( pawn ) )&&
-                                    ( GenSight.LineOfSight(
-                                        compGatherSpot.parent.Position,
-                                        sittableThing.Position,
-                                        sittableThing.Map,
-                                        true ) )
-                                )
-                            )
-                            {
-                                job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, sittableThing );
-                                break;
-                            }
+                            job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, chair );
                         }
-                        if( job == null )
+                        else
                         {
-                            for( int index = 0; index < 30; ++index )
+                            IntVec3 sitSpot;
+                            if( !TryFindSitSpotOnGroundNear(  compGatherSpot.parent.Position, pawn, out sitSpot ) )
                             {
-                                IntVec3 occupySpot = compGatherSpot.parent.Position + GenRadial.RadialPattern[ Rand.Range( 1, NumRadiusCells ) ];
-                                if(
-                                    ( pawn.CanReserveAndReach(
-                                        occupySpot,
-                                        PathEndMode.OnCell,
-                                        Danger.None,
-                                        1 ) )&&
-                                    ( occupySpot.GetEdifice( compGatherSpot.parent.Map ) == null )&&
-                                    ( GenSight.LineOfSight(
-                                        compGatherSpot.parent.Position,
-                                        occupySpot,
-                                        compGatherSpot.parent.Map,
-                                        true ) )
-                                )
-                                {
-                                    job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, occupySpot );
-                                }
+                                return null;
                             }
+                            job = new Job( JobDefOf.SocialRelax, compGatherSpot.parent, sitSpot );
                         }
                     }
-                    if( job == null )
+                    if( pawn.health.capacities.CapableOf( PawnCapacityDefOf.Manipulation ) )
                     {
-                        return (Job)null;
-                    }
-                    if(
-                        ( pawn.health.capacities.CapableOf( PawnCapacityDefOf.Manipulation ) )&&
-                        (
-                            ( pawn.story == null )||
-                            ( pawn.story.traits.DegreeOfTrait( TraitDefOf.DrugDesire ) >= 0 )
-                        )
-                    )
-                    {
-                        List<Thing> list = pawn.Map.listerThings.AllThings.Where( t => (
-                            ( t.def.IsAlcohol() )||
-                            ( t is Building_AutomatedFactory )
-                        ) ).ToList();
-                        if( list.Count > 0 )
+                        Thing drugSource;
+                        ThingDef drugDef;
+                        if( DrugUtility.TryFindJoyDrug( compGatherSpot.parent.Position, pawn, 40f, true, JoyGiver_SocialRelax_Extensions.NurseableDrugs(), out drugSource, out drugDef ) )
                         {
-                            Thing thing = GenClosest.ClosestThing_Global_Reachable(
-                                compGatherSpot.parent.Position,
-                                pawn.Map,
-                                list,
-                                PathEndMode.OnCell,
-                                TraverseParms.For(
-                                    pawn,
-                                    pawn.NormalMaxDanger() ),
-                                40f,
-                                ( t ) =>
+                            job.targetC = drugSource;
+                            var synthesizer = drugSource as Building_AutomatedFactory;
+                            if( synthesizer != null )
                             {
-                                if( t.IsForbidden( pawn ) )
-                                {
-                                    return false;
+                                if( !synthesizer.ReserveForUseBy( pawn, drugDef ) )
+                                {   // Couldn't reserve the synthesizer for production
+                                    return null;
                                 }
+                                job.maxNumToCarry = 1;
+                            }
+                            else
+                            {
+                                job.maxNumToCarry = Mathf.Min( drugSource.stackCount, drugSource.def.ingestible.maxNumToIngestAtOnce );
+                            }
 
-                                if( t is Building_AutomatedFactory )
-                                {
-                                    var FS = t as Building_AutomatedFactory;
-                                    if(
-                                        ( !FS.InteractionCell.Standable( t.Map ) )||
-                                        ( !FS.CompPowerTrader.PowerOn )||
-                                        ( FS.BestProduct( FoodSynthesis.IsAlcohol, FoodSynthesis.SortAlcohol ) == null )
-                                    )
-                                    {
-                                        return false;
-                                    }
-                                }
-                                return pawn.CanReserve( t, 1 );
-                            } );
-                            if( thing != null )
-                            {
-                                job.targetC = thing;
-                                job.count = Mathf.Min( thing.stackCount, thing.def.ingestible.maxNumToIngestAtOnce );
-                            }
                         }
                     }
                     return job;
                 }
             }
-            return (Job)null;
+            return null;
         }
 
         #endregion

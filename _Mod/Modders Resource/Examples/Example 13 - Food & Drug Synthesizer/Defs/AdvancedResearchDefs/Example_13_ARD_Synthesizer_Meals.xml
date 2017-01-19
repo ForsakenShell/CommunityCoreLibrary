@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <CommunityCoreLibrary.AdvancedResearchDef>
+
+        <defName>Example_13_AdvancedFineMealSynthesis</defName>
+        <Priority>0</Priority>
+
+        <researchDefs>
+            <li>Example_13_FineMealSynthesis</li>
+        </researchDefs>
+
+        <recipeDefs>
+            <li>Example_13_SynthesizeMealFine</li>
+        </recipeDefs>
+
+        <thingDefs>
+            <li>Example_13_Synthesizer</li>
+        </thingDefs>
+
+    </CommunityCoreLibrary.AdvancedResearchDef>
+
+    <CommunityCoreLibrary.AdvancedResearchDef>
+
+        <defName>Example_13_AdvancedLavishMealSynthesis</defName>
+        <Priority>0</Priority>
+
+        <researchDefs>
+            <li>Example_13_LavishMealSynthesis</li>
+        </researchDefs>
+
+        <recipeDefs>
+            <li>Example_13_SynthesizeMealLavish</li>
+        </recipeDefs>
+
+        <thingDefs>
+            <li>Example_13_Synthesizer</li>
+        </thingDefs>
+
+    </CommunityCoreLibrary.AdvancedResearchDef>
+
+</Defs>

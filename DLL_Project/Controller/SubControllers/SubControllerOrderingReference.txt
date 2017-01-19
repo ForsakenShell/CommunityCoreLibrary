@@ -1,0 +1,7 @@
+SubController:              Validation:     Initialization:     Update:     GameLoad:
+
+HelpSubController           n/a             80                  n/a         n/a
+InjectionSubController      90              100                 n/a         100
+ModOrderSubController       100             50                  n/a         n/a
+MiniMapSubController        10              40                  n/a         n/a
+ResearchSubController       50              90                  50          90

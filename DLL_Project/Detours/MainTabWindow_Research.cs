@@ -16,7 +16,8 @@ namespace CommunityCoreLibrary.Detour
 
         #region Detoured Methods
 
-        internal static bool _NotFinishedNotLockedOut( ResearchProjectDef project )
+        // Can't use attribute, this needs a special injector
+        internal static bool                _NotFinishedNotLockedOut( ResearchProjectDef project )
         {
             return ( !project.IsFinished )&&( !project.IsLockedOut() );
         }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <CommunityCoreLibrary.ModHelperDef>
+        <defName>Example_5_MHD_AncientCryptosleep</defName>
+
+        <ModName>Example 5 - Ancient Cryptosleep</ModName>
+
+        <minCCLVersion>0.15.0</minCCLVersion>
+
+        <SequencedInjectionSets>
+
+            <li Class="CommunityCoreLibrary.SequencedInjectionSet_ThingDefAvailability">
+                <menuHidden>false</menuHidden>
+                <designationCategory>Misc</designationCategory>
+                <targetDefs>
+                    <li>AncientCryptosleepCasket</li>
+                </targetDefs>
+            </li>
+
+        </SequencedInjectionSets>
+
+    </CommunityCoreLibrary.ModHelperDef>
+
+</Defs>

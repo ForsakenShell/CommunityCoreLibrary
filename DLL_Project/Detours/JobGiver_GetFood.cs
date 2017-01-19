@@ -15,10 +15,11 @@ using CommunityCoreLibrary;
 namespace CommunityCoreLibrary.Detour
 {
 
-    internal static class _JobGiver_GetFood
+    internal class _JobGiver_GetFood : JobGiver_GetFood
     {
-        
-        internal static Job _TryGiveJob( this JobGiver_GetFood obj, Pawn pawn )
+
+        [DetourMember]
+        internal Job                        _TryGiveJob( Pawn pawn )
         {
             bool desperate = pawn.needs.food.CurCategory == HungerCategory.Starving;
             Thing foodSource;
@@ -39,6 +40,7 @@ namespace CommunityCoreLibrary.Detour
                 true )
             )
             {
+                //CCL_Log.Message( "Nothing found to eat" );
                 return null;
             }
 
@@ -48,6 +50,7 @@ namespace CommunityCoreLibrary.Detour
             var prey = foodSource as Pawn;
             if( prey != null )
             {
+                //CCL_Log.Message( "Returning prey for predator" );
                 var hunterJob = new Job( JobDefOf.PredatorHunt, prey );
                 hunterJob.killIncappedTarget = true;
                 return hunterJob;
@@ -70,12 +73,12 @@ namespace CommunityCoreLibrary.Detour
                 }
                 if( foodSource is Building_AutomatedFactory )
                 {
-                    var FS = foodSource as Building_AutomatedFactory;
-                    if( foodDef == null )
+                    var synthesizer = foodSource as Building_AutomatedFactory;
+                    if( !synthesizer.IsConsidering( pawn ) )
                     {
                         //CCL_Log.Message( string.Format( "Hopper for {0} needs filling", foodSource.ThingID ) );
                         hopperNeedsFilling = true;
-                        hopper = FS.AdjacentReachableHopper( pawn );
+                        hopper = synthesizer.AdjacentReachableHopper( pawn );
                     }
                 }
                 if( hopperNeedsFilling )
@@ -103,20 +106,41 @@ namespace CommunityCoreLibrary.Detour
                         {
                             return null;
                         }
-                        foodDef = FoodUtility.GetFinalIngestibleDef( foodSource );
+                        foodDef = foodSource.def;
                     }
                 }
+            }
+
+            if( foodSource is Building_AutomatedFactory )
+            {
+                //CCL_Log.Message( "Attempting to reserve synthesizer" );
+                var synthesizer = foodSource as Building_AutomatedFactory;
+                if(
+                    ( !synthesizer.IsConsidering( pawn ) )||
+                    ( !synthesizer.ReserveForUseBy( pawn, synthesizer.ConsideredProduct ) )
+                )
+                {   // Couldn't reserve the synthesizer for production
+#if DEVELOPER
+                    CCL_Log.Trace(
+                        Verbosity.NonFatalErrors,
+                        string.Format( "{0} is not considering or could not reserve {1} for {2}", pawn.LabelShort, synthesizer.ThingID, synthesizer.ConsideredProduct == null ? "nothing" : synthesizer.ConsideredProduct.defName ),
+                        "Detour.JobGiver_GetFood.TryGiveJob"
+                    );
+#endif
+                    return null;
+                }
+                foodDef = synthesizer.ReservedThingDef;
             }
 
             //CCL_Log.Message( string.Format( "Giving JobDriver_Ingest to {0} using {1}", pawn.LabelShort, foodSource.ThingID ) );
             // Ingest job for found food source
             var ingestJob = new Job( JobDefOf.Ingest, foodSource );
-            ingestJob.count = FoodUtility.WillIngestStackCountOf( pawn, foodDef );
+            ingestJob.maxNumToCarry = FoodUtility.WillIngestStackCountOf( pawn, foodDef );
             return ingestJob;
         }
 
 
-        internal static Job HopperFillFoodJob( Pawn pawn, Building hopper, Thing parent )
+        internal static Job                 HopperFillFoodJob( Pawn pawn, Building hopper, Thing parent )
         {
             var hopperSgp = hopper as ISlotGroupParent;
             if(
@@ -131,7 +155,7 @@ namespace CommunityCoreLibrary.Detour
                 return null;
             }
             ThingDef resourceDef = null;
-            var firstItem = hopper.Position.GetFirstItem( hopper.Map );
+            var firstItem = hopper.Position.GetFirstItem();
             if( firstItem != null )
             {
                 if(

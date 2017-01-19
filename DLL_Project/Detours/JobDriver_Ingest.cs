@@ -14,75 +14,118 @@ using UnityEngine;
 namespace CommunityCoreLibrary.Detour
 {
 
-    internal static class _JobDriver_Ingest
+    internal class _JobDriver_Ingest : JobDriver_Ingest
     {
 
-        internal const TargetIndex FoodInd = TargetIndex.A;
-        internal const TargetIndex TableCellInd = TargetIndex.B;
-        internal const TargetIndex AlcoholInd = TargetIndex.C;
+        internal const TargetIndex          IngestibleInd = TargetIndex.A;
+        internal const TargetIndex          TableCellInd = TargetIndex.B;
+        internal const TargetIndex          ExtraIngestiblesToCollectInd = TargetIndex.C;
+
+        #region Helper Methods
+
+        internal Thing                      IngestibleSource
+        {
+            get
+            {
+                return this.TargetThing( IngestibleInd );
+            }
+        }
+
+        internal bool                       IsUsingDrugs
+        {
+            get
+            {
+                // TODO:  Resolve factories
+                return false;
+            }
+        }
+
+        internal ThingDef                   IngestibleDefFromSource( Thing foodSource )
+        {
+            if( foodSource is Building_AutomatedFactory )
+            {   // JobGivers will check for OutputToPawnsDirectly
+                return ((Building_AutomatedFactory)foodSource).ReservedThingDef;
+            }
+            if( foodSource is Building_NutrientPasteDispenser )
+            {
+                return ((Building_NutrientPasteDispenser)foodSource).DispensableDef;
+            }
+            return foodSource.def;
+        }
+
+        #endregion
 
         #region Detoured Methods
 
-        internal static bool _UsingNutrientPasteDispenser( this JobDriver_Ingest obj )
+        [DetourMember]
+        internal bool                       _UsingNutrientPasteDispenser
         {
-            var foodSource = obj.TargetThing( FoodInd );
-            if( foodSource is Building_AutomatedFactory )
-            {   // JobGivers will check for OutputToPawnsDirectly
-                return true;
+            get
+            {
+                return IngestibleSource.def.IsFoodDispenser;
             }
-            return foodSource is Building_NutrientPasteDispenser;
         }
 
-        internal static string _GetReport( this JobDriver_Ingest obj )
+        [DetourMember]
+        internal string                     _GetReport()
         {
-            var curJob = obj.pawn.jobs.curJob;
-            var foodSource = obj.TargetThing( FoodInd );
-            ThingDef foodDef = null;
-            if( foodSource is Building_AutomatedFactory )
-            {
-                foodDef = ((Building_AutomatedFactory)foodSource).BestProduct( FoodSynthesis.IsMeal, FoodSynthesis.SortMeal );
-            }
-            else if( foodSource is Building_NutrientPasteDispenser )
-            {
-                foodDef = ((Building_NutrientPasteDispenser)foodSource).DispensableDef;
-            }
-            if( foodDef != null )
-            {
-                return curJob.def.reportString.Replace( "TargetA", foodDef.label );
-            }
-            var str = curJob.def.reportString;
-            str = !curJob.targetA.HasThing ? str.Replace( "TargetA", "AreaLower".Translate() ) : str.Replace( "TargetA", curJob.targetA.Thing.LabelShort );
-            str = !curJob.targetB.HasThing ? str.Replace( "TargetB", "AreaLower".Translate() ) : str.Replace( "TargetB", curJob.targetB.Thing.LabelShort );
-            str = !curJob.targetC.HasThing ? str.Replace( "TargetC", "AreaLower".Translate() ) : str.Replace( "TargetC", curJob.targetC.Thing.LabelShort );
-            return str;
+            var curJob = this.pawn.jobs.curJob;
+            var foodSource = IngestibleSource;
+            if( foodSource == null )
+			{
+				return this.ReportStringProcessed( this.CurJob.def.reportString );
+			}
+            var foodDef = FoodUtility.GetFinalIngestibleDef( foodSource );
+            if(
+                ( foodDef == null )||
+                ( string.IsNullOrEmpty( foodDef.ingestible.ingestReportString ) )
+            )
+			{
+				return this.ReportStringProcessed( this.CurJob.def.reportString );
+			}
+            return string.Format( foodDef.ingestible.ingestReportString, foodDef.label );
         }
 
-        internal static IEnumerable<Toil> _PrepareToEatToils_Dispenser( this JobDriver_Ingest obj )
+        [DetourMember]
+        internal IEnumerable<Toil>          _PrepareToIngestToils_Dispenser()
         {
-            var foodSource = obj.TargetThing( FoodInd );
-            var alcohol = obj.TargetThing( AlcoholInd );
+            var ingestibleSource = IngestibleSource;
 
-            yield return Toils_Reserve.Reserve( FoodInd, 1 );
-            yield return Toils_Goto.GotoThing( FoodInd, PathEndMode.InteractionCell )
-                                   .FailOnDespawnedNullOrForbidden( FoodInd );
-            if( foodSource is Building_NutrientPasteDispenser )
-            {
-                yield return Toils_Ingest.TakeMealFromDispenser( FoodInd, obj.pawn );
-            }
-            else if( foodSource is Building_AutomatedFactory )
-            {
-                if( alcohol == null )
+            yield return Toils_Reserve.Reserve( IngestibleInd, 1 );
+            this.AddFinishAction( () =>
+            {   // Release on early exit
+                if( Find.Reservations.ReservedBy( ingestibleSource, pawn ) )
                 {
-                    yield return Toils_FoodSynthesizer.TakeMealFromSynthesizer( FoodInd, obj.pawn );
+                    Find.Reservations.Release( ingestibleSource, pawn );
+                }
+            } );
+
+            yield return Toils_Goto.GotoThing( IngestibleInd, PathEndMode.InteractionCell )
+                                   .FailOnDespawnedNullOrForbidden( IngestibleInd );
+
+            if( ingestibleSource is Building_NutrientPasteDispenser )
+            {
+                yield return Toils_Ingest.TakeMealFromDispenser( IngestibleInd, this.pawn );
+            }
+            else if( ingestibleSource is Building_AutomatedFactory )
+            {
+                // CALLER MUST USE Building_AutomatedFactory.ReserveForUseBy() BEFORE USING THIS METHOD!
+                yield return Toils_FoodSynthesizer.TakeFromSynthesier( IngestibleInd, this.pawn );
+                /*
+                if( !IsUsingDrugs )
+                {
+                    yield return Toils_FoodSynthesizer.TakeMealFromSynthesizer( IngestibleInd, this.pawn );
                 }
                 else
                 {
-                    yield return Toils_FoodSynthesizer.TakeAlcoholFromSynthesizer( AlcoholInd, obj.pawn );
+                    yield return Toils_FoodSynthesizer.TakeDrugFromSynthesizer( IngestibleInd, this.pawn );
                 }
+                */
             }
-            yield return Toils_Ingest.CarryIngestibleToChewSpot( obj.pawn, FoodInd )
-                                     .FailOnDestroyedNullOrForbidden( FoodInd );
-            yield return Toils_Ingest.FindAdjacentEatSurface( TableCellInd, FoodInd );
+            yield return Toils_Ingest.CarryIngestibleToChewSpot( this.pawn, IngestibleInd )
+                                     .FailOnDestroyedNullOrForbidden( IngestibleInd );
+            yield return Toils_Ingest.FindAdjacentEatSurface( TableCellInd, IngestibleInd );
+            yield break;
         }
 
         #endregion

@@ -141,11 +141,10 @@ namespace CommunityCoreLibrary
         {
             // Get list of things
             var thingDefs =
-                DefDatabase< ThingDef >.AllDefsListForReading.Where( t => 
-                    t.IsIngestible() &&
-                    t.ingestible.drugCategory != DrugCategory.None &&
-                    t.ingestible.joy > 0f 
-                ).ToList();
+                DefDatabase< ThingDef >.AllDefsListForReading.Where( t => (
+                    ( t.IsIngestible )&&
+                    ( t.IsDrug )
+                ) ).ToList();
 
             if( thingDefs.NullOrEmpty() )
             {
@@ -167,8 +166,8 @@ namespace CommunityCoreLibrary
             // Get list of things
             var thingDefs =
                 DefDatabase< ThingDef >.AllDefsListForReading.Where( t => (
-                    t.IsNutritionGivingIngestible &&
-                    ( t.ingestible.drugCategory == DrugCategory.None || t.ingestible.joy <= 0f )
+                    ( t.IsNutritionGivingIngestible )&&
+                    ( !t.IsDrug )
                 ) ).ToList();
 
             if( thingDefs.NullOrEmpty() )
@@ -222,7 +221,7 @@ namespace CommunityCoreLibrary
                 // Get list of things
                 var thingDefs =
                     DefDatabase< ThingDef >.AllDefsListForReading.Where( t => (
-                        ( t.designationCategory.defName == designationCategoryDef.defName )
+                        ( t.designationCategory == designationCategoryDef.defName )
                         && ( !t.IsLockedOut() )
                     ) ).ToList();
 
@@ -248,8 +247,8 @@ namespace CommunityCoreLibrary
                     ( t.Minifiable )&&
                     (
                         (
-                            ( t.designationCategory == null ) ||
-                            ( t.designationCategory.defName == "None" )
+                            ( t.designationCategory.NullOrEmpty() )||
+                            ( t.designationCategory == "None" )
                         )
                     )&&
                     ( !t.IsLockedOut() )
@@ -283,9 +282,8 @@ namespace CommunityCoreLibrary
             List<TerrainDef> terrainDefs =
                 DefDatabase<TerrainDef>.AllDefsListForReading
                                        .Where( 
-                                            // not buildable #TODO: figure out if this is the right way to check this
-                                            t => ( t.designationCategory == null ||
-                                                   t.designationCategory.defName.ToLower() == "none" )
+                                            // not buildable
+                                            t => String.IsNullOrEmpty( t.designationCategory )
                                             && (
                                                 // is a type generated from rock
                                                 rockySuffixes.Any( s => t.defName.EndsWith( s ) )
@@ -448,7 +446,7 @@ namespace CommunityCoreLibrary
             // Get advanced research database
             var advancedResearchDefs =
                 Controller.Data.AdvancedResearchDefs.Where( a => (
-                    ( a.ResearchConsolidator == a )&&
+                    ( a.HelpConsolidator == a )&&
                     ( a.HasHelp )
                 ) ).ToList();
 
@@ -680,7 +678,7 @@ namespace CommunityCoreLibrary
 
                 #region Ingestible Stats
                 // Look at base stats
-                if( thingDef.IsIngestible() )
+                if( thingDef.IsIngestible )
                 {
                     // only show Joy if it's non-zero
                     List<Def> needDefs = new List<Def>();
@@ -713,9 +711,8 @@ namespace CommunityCoreLibrary
                 #region Body Part Stats
 
                 if( ( !thingDef.thingCategories.NullOrEmpty() ) &&
-                    // A14 - BodyPartsAndImplants => BodyParts + BodyPartsArtificial?
                     ( thingDef.thingCategories.Contains( ThingCategoryDefOf.BodyParts ) ) &&
-                    ( thingDef.IsImplant() ) )
+                    ( thingDef.isBodyPartOrImplant ) )
                 {
                     var hediffDef = thingDef.GetImplantHediffDef();
 

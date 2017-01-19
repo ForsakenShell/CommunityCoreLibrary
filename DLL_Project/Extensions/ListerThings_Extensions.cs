@@ -10,11 +10,38 @@ namespace CommunityCoreLibrary
 
     public static class ListerThings_Extensions
     {
-        
-        public static List<Thing>           ListByGroup( this ThingRequestGroup group )
+
+        private static FieldInfo            _listsByGroup;
+        private static FieldInfo            _listsByDef;
+
+        static                              ListerThings_Extensions()
         {
-            var listsByGroup = typeof( ListerThings ).GetField( "listsByGroup", BindingFlags.Instance | BindingFlags.NonPublic ).GetValue( Find.ListerThings ) as List<Thing>[];
-            return listsByGroup[ (int) group ];
+            _listsByGroup = typeof( ListerThings ).GetField( "listsByGroup", Controller.Data.UniversalBindingFlags );
+            if( _listsByGroup == null )
+            {
+                CCL_Log.Trace(
+                    Verbosity.FatalErrors,
+                    "Unable to get field 'listsByGroup' in 'ListerThings'",
+                    "ListerThings_Extensions" );
+            }
+            _listsByDef = typeof( ListerThings ).GetField( "listsByDef", Controller.Data.UniversalBindingFlags );
+            if( _listsByDef == null )
+            {
+                CCL_Log.Trace(
+                    Verbosity.FatalErrors,
+                    "Unable to get field 'listsByDef' in 'ListerThings'",
+                    "ListerThings_Extensions" );
+            }
+        }
+
+        public static List<Thing>[]         ListsByGroup( this ListerThings listerThings )
+        {
+            return _listsByGroup.GetValue( listerThings ) as List<Thing>[];
+        }
+
+        public static Dictionary<ThingDef,List<Thing>> ListsByDef( this ListerThings listerThings )
+        {
+            return _listsByDef.GetValue( listerThings ) as Dictionary<ThingDef,List<Thing>>;
         }
 
     }

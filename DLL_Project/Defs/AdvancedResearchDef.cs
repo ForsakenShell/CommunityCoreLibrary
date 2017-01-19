@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -15,12 +16,15 @@ namespace CommunityCoreLibrary
 
         #region XML Data
 
+        private const int                   InvalidPriority = 0xBADC0DE;
+        public const int                    HelpConsolidatePriority = -1;
+
         // Processing priority so everything happens in the order it should
         // Lower value is higher priority
-        public int                          Priority;
+        public int                          Priority = InvalidPriority;
 
         // Flag this as true to hide/lock, false (default) for show/unlock
-        public bool                         HideDefs;
+        public bool                         HideDefs = false;
 
         // Research requirement
         public List< ResearchProjectDef >   researchDefs;
@@ -50,7 +54,7 @@ namespace CommunityCoreLibrary
         HelpDef                             helpDef;
 
         List< AdvancedResearchDef >         matchingAdvancedResearch;
-        AdvancedResearchDef                 researchConsolidator;
+        AdvancedResearchDef                 helpConsolidator;
 
         float                               totalCost = -1;
 
@@ -106,6 +110,9 @@ namespace CommunityCoreLibrary
         {
             if( !isValidChecked )
             {
+#if DEVELOPER
+                try{
+#endif
                 // Hopefully...
                 isValid = true;
 
@@ -139,11 +146,132 @@ namespace CommunityCoreLibrary
                     );
                 }
 
+                // Validate priority
+                if( Priority < HelpConsolidatePriority )
+                {
+                    isValid = false;
+                    if( Priority == InvalidPriority )
+                    {
+                        // Priority not set (or set to the default invalid value)
+                        CCL_Log.TraceMod(
+                            this,
+                            Verbosity.FatalErrors,
+                            "Priority not set"
+                        );
+                    }
+                    else
+                    {
+                        // Invalid priority
+                        CCL_Log.TraceMod(
+                            this,
+                            Verbosity.FatalErrors,
+                            "Priority must be -1 or greater and unique for matching researchDefs"
+                        );
+                    }
+                }
+                else
+                {
+                    var matchingResearch = this.MatchingAdvancedResearch;
+                    foreach( var otherDef in matchingResearch )
+                    {
+                        if(
+                            ( otherDef != this )&&
+                            ( otherDef.Priority == this.Priority )
+                        )
+                        {
+                            // Invalid priority
+                            isValid = false;
+                            CCL_Log.TraceMod(
+                                this,
+                                Verbosity.FatalErrors,
+                                "Priority must be -1 or greater and unique for matching researchDefs"
+                            );
+                        }
+                    }
+                }
+
+                // Validate help
+                if( researchDefs.Count > 1 )
+                {
+                    if(
+                        (
+                            ( Priority != HelpConsolidatePriority )&&
+                            ( ConsolidateHelp )
+                        )||
+                        (
+                            ( Priority == HelpConsolidatePriority )&&
+                            ( !ConsolidateHelp )
+                        )
+                    )
+                    {
+                        // Not properly setup as the help consolidator
+                        isValid = false;
+                        CCL_Log.TraceMod(
+                            this,
+                            Verbosity.FatalErrors,
+                            string.Format( "Mismatched Priority ({0}) and ConsolidateHelp ({1}) values", Priority, ConsolidateHelp )
+                        );
+                    }
+
+                    // Get the help consolidator
+                    if(
+                        ( HelpConsolidator == null )&&
+                        ( MatchingAdvancedResearch.Count > 1 )
+                    )
+                    {
+                        // Error processing data
+                        isValid = false;
+                        CCL_Log.TraceMod(
+                            this,
+                            Verbosity.FatalErrors,
+                            string.Format( "No valid help consolidator for AdvancedResearchDef {0}", defName )
+                        );
+                    }
+
+                    // Make sure the help consolidator has the proper fields defined
+                    if( HelpConsolidator == this )
+                    {
+                        if( label.NullOrEmpty() )
+                        {
+                            // Error processing data
+                            isValid = false;
+                            CCL_Log.TraceMod(
+                                this,
+                                Verbosity.FatalErrors,
+                                "Help Consolidator requires missing label"
+                            );
+                        }
+                        if( description.NullOrEmpty() )
+                        {
+                            // Error processing data
+                            isValid = false;
+                            CCL_Log.TraceMod(
+                                this,
+                                Verbosity.FatalErrors,
+                                "Help Consolidator requires missing description"
+                            );
+                        }
+                    }
+                }
+                else if(
+                    ( Priority == HelpConsolidatePriority )&&
+                    ( ConsolidateHelp )
+                )
+                {
+                    // Not valid setup as the help consolidator
+                    isValid = false;
+                    CCL_Log.TraceMod(
+                        this,
+                        Verbosity.FatalErrors,
+                        string.Format( "Defs with a single researchDef cannot be help consolidators.  The information for this def will be added to the help for the single research prerequisite, Priority = '{0}', ConsolidateHelp = '{1}'", Priority, ConsolidateHelp )
+                    );
+                }
+
                 // Validate recipes
                 if( IsRecipeToggle )
                 {
                     // v0.12.7 - Obsoleted check to allow for automated machines
-                    // Make sure thingDefs are of the appropriate type (has InspectTabBase_Bills)
+                    // Make sure thingDefs are of the appropriate type
                     /*
                     foreach( var thingDef in thingDefs )
                     {
@@ -168,10 +296,7 @@ namespace CommunityCoreLibrary
                     // Make sure things are of the appropriate class (Plant)
                     foreach( var thingDef in thingDefs )
                     {
-                        if(
-                            ( thingDef.thingClass != typeof( Plant ) )&&
-                            ( !thingDef.thingClass.IsSubclassOf( typeof(Plant) ) )
-                        )
+                        if( !typeof( Plant ).IsAssignableFrom( thingDef.thingClass ) )
                         {
                             // Invalid plant
                             isValid = false;
@@ -203,27 +328,32 @@ namespace CommunityCoreLibrary
                 if( IsBuildingToggle )
                 {
                     // Make sure thingDefs are of the appropriate type (has proper designationCategory)
-                    // #TODO: figure out if this is the right way to check this
                     foreach( var thingDef in thingDefs )
                     {
-                        if( ( thingDef.designationCategory == null ) ||
-                            ( thingDef.designationCategory.defName.ToLower() == "none" ) )
+                        if( ( thingDef.designationCategory.NullOrEmpty() )||
+                            ( thingDef.designationCategory.ToLower() == "none" ) )
                         {
                             bool mhdUnlock = false;
                             foreach( var mhd in DefDatabase<ModHelperDef>.AllDefs )
                             {
-                                if( mhd.ThingDefAvailability != null )
+                                if( mhd.SequencedInjectionSets != null )
                                 {
-                                    foreach( var tda in mhd.ThingDefAvailability )
+                                    foreach( var tda in mhd.SequencedInjectionSets )
                                     {
                                         if(
-                                            ( tda.targetDefs.Contains( thingDef.defName ) )&&
-                                            ( !tda.designationCategory.NullOrEmpty() )&&
-                                            ( tda.designationCategory.ToLower() != "none" )
+                                            ( tda.GetType() == typeof( SequencedInjectionSet_ThingDefAvailability ) )&&
+                                            ( tda.targetDefs.Contains( thingDef.defName ) )
                                         )
                                         {
-                                            mhdUnlock = true;
-                                            break;
+                                            var injectorData = tda as SequencedInjectionSet_ThingDefAvailability;
+                                            if(
+                                                ( !string.IsNullOrEmpty( injectorData.designationCategory ) )&&
+                                                ( injectorData.designationCategory.ToLower() != "none" )
+                                            )
+                                            {
+                                                mhdUnlock = true;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -246,50 +376,20 @@ namespace CommunityCoreLibrary
                     }
                 }
 
-                // Validate help
-                if( researchDefs.Count > 1 )
-                {
-                    if( ResearchConsolidator == null )
-                    {
-                        // Error processing data
-                        isValid = false;
-                        CCL_Log.TraceMod(
-                            this,
-                            Verbosity.FatalErrors,
-                            string.Format( "No valid help consolidator for AdvancedResearchDef {0}", defName )
-                        );
-                    }
-                    if( ( HasHelp )&&
-                        ( ResearchConsolidator == this ) )
-                    {
-                        if( label.NullOrEmpty() )
-                        {
-                            // Error processing data
-                            isValid = false;
-                            CCL_Log.TraceMod(
-                                this,
-                                Verbosity.FatalErrors,
-                                "Help Consolidator requires missing label"
-                            );
-                        }
-                        if( description.NullOrEmpty() )
-                        {
-                            // Error processing data
-                            isValid = false;
-                            CCL_Log.TraceMod(
-                                this,
-                                Verbosity.FatalErrors,
-                                "Help Consolidator requires missing description"
-                            );
-                        }
-                    }
+#endif
+#if DEVELOPER
+                }catch( Exception e ){
+                    CCL_Log.TraceMod(
+                        this,
+                        Verbosity.FatalErrors,
+                        string.Format( "Exception:\n{0}", e ) );
                 }
 #endif
             }
             return isValid;
         }
 
-        public ResearchEnableMode EnableMode
+        public ResearchEnableMode           EnableMode
         {
             get
             {
@@ -316,7 +416,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool IsRecipeToggle
+        public bool                         IsRecipeToggle
         {
             get
             {
@@ -329,7 +429,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool IsPlantToggle
+        public bool                         IsPlantToggle
         {
             get
             {
@@ -342,7 +442,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool IsBuildingToggle
+        public bool                         IsBuildingToggle
         {
             get
             {
@@ -355,7 +455,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool IsResearchToggle
+        public bool                         IsResearchToggle
         {
             get
             {
@@ -366,7 +466,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool HasCallbacks
+        public bool                         HasCallbacks
         {
             get
             {
@@ -377,20 +477,20 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public bool HasHelp
+        public bool                         HasHelp
         {
             get
             {
                 return
-                    ( ConsolidateHelp )||
                     (
-                        ( ResearchConsolidator != null )&&
-                        ( ResearchConsolidator.ConsolidateHelp )
-                    );
+                        ( ConsolidateHelp )&&
+                        ( Priority == HelpConsolidatePriority )
+                    )||
+                    ( HelpConsolidator != null );
             }
         }
 
-        bool HasMatchingResearch( AdvancedResearchDef other )
+        bool                                HasMatchingResearch( AdvancedResearchDef other )
         {
             if( researchDefs.Count != other.researchDefs.Count )
             {
@@ -402,7 +502,7 @@ namespace CommunityCoreLibrary
 
             for( int i = 0; i < researchDefs.Count; ++i )
             {
-                if( researchDefs[i] != other.researchDefs[i] )
+                if( researchDefs[ i ] != other.researchDefs[ i ] )
                 {
                     return false;
                 }
@@ -413,7 +513,7 @@ namespace CommunityCoreLibrary
         /// <summary>
         /// Total research cost of all required researches
         /// </summary>
-        public float TotalCost
+        public float                        TotalCost
         {
             get
             {
@@ -427,26 +527,33 @@ namespace CommunityCoreLibrary
 
         
 
-        public AdvancedResearchDef ResearchConsolidator
+        public AdvancedResearchDef          HelpConsolidator
         {
             get
             {
-                if( ConsolidateHelp )
+                if(
+                    ( ConsolidateHelp )&&
+                    ( Priority == HelpConsolidatePriority )
+                )
                 {
                     return this;
                 }
-                if( researchConsolidator == null )
+                if( helpConsolidator == null )
                 {
-                    var matching = Data.AdvancedResearchDefs.Where( a => (
-                        ( HasMatchingResearch( a ) )
-                    ) ).ToList();
-                    researchConsolidator = matching.FirstOrDefault( a => ( a.Priority == -1 )&&( a.ConsolidateHelp ) );
-                    if( researchConsolidator == null )
+                    var matching = MatchingAdvancedResearch;
+                    if(
+                        ( matching.NullOrEmpty() )||
+                        (
+                            ( matching[ 0 ].Priority != HelpConsolidatePriority )||
+                            ( !matching[ 0 ].ConsolidateHelp )
+                        )
+                    )
                     {
-                        researchConsolidator = matching.FirstOrDefault();
+                        return null;
                     }
+                    helpConsolidator = matching[ 0 ];
                 }
-                return researchConsolidator;
+                return helpConsolidator;
             }
         }
 
@@ -454,7 +561,17 @@ namespace CommunityCoreLibrary
 
         #region Process State
 
-        public void Disable( bool firstTimeRun = false )
+        public void                         ResetOnGameLoad()
+        {
+            //CCL_Log.Message( string.Format( "Resetting '{0}', HideDefs = '{1}'", this.defName, this.HideDefs ), "AdvancedResearchDef" );
+            researchState = ResearchEnableMode.Incomplete;
+            if( !HideDefs )
+            {
+                this.Disable( true );
+            }
+        }
+
+        public void                         Disable( bool firstTimeRun = false )
         {
             // Don't disable if it's not the first run and not yet enabled
             if(
@@ -464,7 +581,7 @@ namespace CommunityCoreLibrary
             {
                 return;
             }
-#if DEBUG
+#if DEVELOPER
             CCL_Log.TraceMod(
                 modHelperDef,
                 Verbosity.StateChanges,
@@ -512,7 +629,7 @@ namespace CommunityCoreLibrary
             researchState = ResearchEnableMode.Incomplete;
         }
 
-        public void Enable( ResearchEnableMode mode )
+        public void                         Enable( ResearchEnableMode mode )
         {
             // Don't enable if enabled
             if( researchState != ResearchEnableMode.Incomplete )
@@ -531,7 +648,7 @@ namespace CommunityCoreLibrary
                 }
                 return;
             }
-#if DEBUG
+#if DEVELOPER
             CCL_Log.TraceMod(
                 modHelperDef,
                 Verbosity.StateChanges,
@@ -576,7 +693,7 @@ namespace CommunityCoreLibrary
             researchState = mode;
         }
 
-        void SortResearch()
+        void                                SortResearch()
         {
             if( researchSorted )
             {
@@ -594,7 +711,7 @@ namespace CommunityCoreLibrary
 
         #region Toggle States
 
-        void ToggleRecipes( bool setInitialState = false )
+        void                                ToggleRecipes( bool setInitialState = false )
         {
             bool Hide = !setInitialState ? HideDefs : !HideDefs;
 
@@ -638,7 +755,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        void TogglePlants( bool setInitialState = false )
+        void                                TogglePlants( bool setInitialState = false )
         {
             bool Hide = !setInitialState ? HideDefs : !HideDefs;
 
@@ -670,7 +787,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        void ToggleBuildings( bool setInitialState = false )
+        void                                ToggleBuildings( bool setInitialState = false )
         {
             bool Hide = !setInitialState ? HideDefs : !HideDefs;
 
@@ -681,7 +798,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        void ToggleResearch( bool setInitialState = false )
+        void                                ToggleResearch( bool setInitialState = false )
         {
             bool Hide = !setInitialState ? HideDefs : !HideDefs;
 
@@ -735,7 +852,7 @@ namespace CommunityCoreLibrary
             ResearchProjectDef_Extensions.ClearIsLockedOut();
         }
 
-        void ToggleCallbacks( bool setInitialState = false )
+        void                                ToggleCallbacks( bool setInitialState = false )
         {
             bool Hide = !setInitialState ? HideDefs : !HideDefs;
 
@@ -761,7 +878,7 @@ namespace CommunityCoreLibrary
             }
         }
 
-        public void ToggleHelp( bool setInitialState = false )
+        public void                         ToggleHelp( bool setInitialState = false )
         {
             if( ( !ConsolidateHelp )||
                 ( HelpDef == null ) )
@@ -789,57 +906,38 @@ namespace CommunityCoreLibrary
 
         #region Aggregate Data
 
-        List<AdvancedResearchDef> MatchingAdvancedResearch
+        List<AdvancedResearchDef>           MatchingAdvancedResearch
         {
             get
             {
-                if( ( matchingAdvancedResearch == null )&&
-                    ( ResearchConsolidator == this ) )
+                if( matchingAdvancedResearch == null )
                 {
                     // Matching advanced research (by requirements)
-                    var matching  = Controller.Data.AdvancedResearchDefs.FindAll( a => (
+                    matchingAdvancedResearch = Controller.Data.AdvancedResearchDefs.FindAll( a => (
                         ( HasMatchingResearch( a ) )
                     ) );
-                    // Find this research as the consolidator
-                    researchConsolidator = matching.First( a => ( a.ConsolidateHelp ) );
-                    if( researchConsolidator == null )
-                    {
-                        // Find the highest priority one instead
-                        researchConsolidator = matching.First();
-                    }
-                    if( researchConsolidator == this )
-                    {
-                        // This is the final consolidator
-                        matching.Remove( this );
-                        // Set reference to help consolidator
-                        foreach( var a in matching )
-                        {
-                            a.researchConsolidator = this;
-                        }
-                        matchingAdvancedResearch = matching;
-                    }
                 }
                 // return the matching research or null
                 return matchingAdvancedResearch;
             }
         }
 
-        public List<Def> GetResearchRequirements()
+        public List<Def>                    GetResearchRequirements()
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetResearchRequirements();
+                return HelpConsolidator.GetResearchRequirements();
             }
 
             // Return the list of research required
             return researchDefs.ConvertAll<Def>( def => (Def)def );
         }
 
-        public List<ThingDef> GetThingsUnlocked()
+        public List<ThingDef>               GetThingsUnlocked()
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetThingsUnlocked();
+                return HelpConsolidator.GetThingsUnlocked();
             }
 
             // Buildings it unlocks
@@ -872,11 +970,11 @@ namespace CommunityCoreLibrary
             return thingdefs;
         }
 
-        public List<ThingDef> GetThingsLocked()
+        public List<ThingDef>               GetThingsLocked()
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetThingsLocked();
+                return HelpConsolidator.GetThingsLocked();
             }
 
             // Buildings it locks
@@ -909,11 +1007,11 @@ namespace CommunityCoreLibrary
             return thingdefs;
         }
 
-        public List<RecipeDef> GetRecipesUnlocked( ref List<ThingDef> thingdefs )
+        public List<RecipeDef>              GetRecipesUnlocked( ref List<ThingDef> thingdefs )
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetRecipesUnlocked( ref thingdefs );
+                return HelpConsolidator.GetRecipesUnlocked( ref thingdefs );
             }
 
             // Recipes on buildings it unlocks
@@ -958,11 +1056,11 @@ namespace CommunityCoreLibrary
             return recipedefs;
         }
 
-        public List<RecipeDef> GetRecipesLocked( ref List<ThingDef> thingdefs )
+        public List<RecipeDef>              GetRecipesLocked( ref List<ThingDef> thingdefs )
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetRecipesLocked( ref thingdefs );
+                return HelpConsolidator.GetRecipesLocked( ref thingdefs );
             }
 
             // Recipes on buildings it locks
@@ -1004,11 +1102,11 @@ namespace CommunityCoreLibrary
             return recipedefs;
         }
 
-        public List<string> GetSowTagsUnlocked( ref List<ThingDef> thingdefs )
+        public List<string>                 GetSowTagsUnlocked( ref List<ThingDef> thingdefs )
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetSowTagsUnlocked( ref thingdefs );
+                return HelpConsolidator.GetSowTagsUnlocked( ref thingdefs );
             }
 
             // Sow tags on plants it unlocks
@@ -1053,11 +1151,11 @@ namespace CommunityCoreLibrary
             return sowtags;
         }
 
-        public List<string> GetSowTagsLocked( ref List<ThingDef> thingdefs )
+        public List<string>                 GetSowTagsLocked( ref List<ThingDef> thingdefs )
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetSowTagsLocked( ref thingdefs );
+                return HelpConsolidator.GetSowTagsLocked( ref thingdefs );
             }
 
             // Sow tags on plants it unlocks
@@ -1102,11 +1200,11 @@ namespace CommunityCoreLibrary
             return sowtags;
         }
 
-        public List<Def> GetResearchUnlocked()
+        public List<Def>                    GetResearchUnlocked()
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetResearchUnlocked();
+                return HelpConsolidator.GetResearchUnlocked();
             }
 
             // Research it unlocks
@@ -1139,11 +1237,11 @@ namespace CommunityCoreLibrary
             return researchdefs;
         }
 
-        public List<Def> GetResearchLocked()
+        public List<Def>                    GetResearchLocked()
         {
-            if( ResearchConsolidator != this )
+            if( HelpConsolidator != this )
             {
-                return ResearchConsolidator.GetResearchLocked();
+                return HelpConsolidator.GetResearchLocked();
             }
 
             // Research it locks
@@ -1180,7 +1278,7 @@ namespace CommunityCoreLibrary
 
         #region Help Def
 
-        public HelpDef HelpDef
+        public HelpDef                      HelpDef
         {
             get
             {
@@ -1189,9 +1287,9 @@ namespace CommunityCoreLibrary
                     return helpDef;
                 }
 
-                if( ResearchConsolidator != null )
+                if( HelpConsolidator != null )
                 {
-                    return ResearchConsolidator.helpDef;
+                    return HelpConsolidator.helpDef;
                 }
                 return null;
             }
@@ -1208,7 +1306,7 @@ namespace CommunityCoreLibrary
 
         #region ResearchProjectDef 'interface'
 
-        public bool IsFinished
+        public bool                         IsFinished
         {
             get
             {

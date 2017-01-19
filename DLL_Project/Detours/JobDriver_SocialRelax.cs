@@ -14,102 +14,131 @@ using UnityEngine;
 namespace CommunityCoreLibrary.Detour
 {
 
-    internal static class _JobDriver_SocialRelax
+    internal class _JobDriver_SocialRelax : JobDriver_SocialRelax
     {
         
-        internal const TargetIndex GatherSpotParentInd = TargetIndex.A;
-        internal const TargetIndex ChairOrSpotInd = TargetIndex.B;
-        internal const TargetIndex OptionalDrinkInd = TargetIndex.C;
+        internal const TargetIndex          GatherSpotParentInd = TargetIndex.A;
+        internal const TargetIndex          ChairOrSpotInd = TargetIndex.B;
+        internal const TargetIndex          OptionalIngestibleInd = TargetIndex.C;
 
         #region Helper Methods
 
-        internal static Thing GatherSpotParent( this JobDriver_SocialRelax obj )
+        internal Thing                      GatherSpotParent
         {
-            return obj.TargetThing( GatherSpotParentInd );
-        }
-
-        internal static IntVec3 ClosestGatherSpotParentCell( this JobDriver_SocialRelax obj )
-        {
-            return obj.GatherSpotParent().OccupiedRect().ClosestCellTo( obj.pawn.Position );
-        }
-
-        internal static bool HasChair( this JobDriver_SocialRelax obj )
-        {
-            return obj.TargetThing( ChairOrSpotInd ) != null;
-        }
-
-        internal static IntVec3 OccupySpot( this JobDriver_SocialRelax obj )
-        {
-            return obj.TargetCell( ChairOrSpotInd );
-        }
-
-        internal static Thing OccupyThing( this JobDriver_SocialRelax obj )
-        {
-            return obj.TargetThing( ChairOrSpotInd );
-        }
-
-        internal static bool IsDrink( this JobDriver_SocialRelax obj )
-        {
-            var thing = obj.TargetThing( OptionalDrinkInd );
-            if( thing == null )
+            get
             {
-                return false;
+                return this.TargetThing( GatherSpotParentInd );
             }
-            return thing.def.IsAlcohol();
         }
 
-        internal static bool IsDispenser( this JobDriver_SocialRelax obj )
+        internal IntVec3                    ClosestGatherSpotParentCell
         {
-            var thing = obj.TargetThing( OptionalDrinkInd );
-            if( thing == null )
+            get
             {
-                return false;
+                return this.GatherSpotParent.OccupiedRect().ClosestCellTo( this.pawn.Position );
             }
-            return thing is Building_AutomatedFactory;
         }
 
-        internal static bool HasDrinkOrDispenser( this JobDriver_SocialRelax obj )
+        internal bool                       HasChair
         {
-            return obj.TargetThing( OptionalDrinkInd ) != null;
+            get
+            {
+                return this.TargetThing( ChairOrSpotInd ) != null;
+            }
         }
 
-        internal static Thing Alcohol( this JobDriver_SocialRelax obj )
+        internal IntVec3                    OccupySpot
         {
-            return obj.TargetThing( OptionalDrinkInd );
+            get
+            {
+                return this.TargetCell( ChairOrSpotInd );
+            }
         }
 
-        internal static Building_AutomatedFactory Dispenser( this JobDriver_SocialRelax obj )
+        internal Thing                      OccupyThing
         {
-            return obj.TargetThing( OptionalDrinkInd ) as Building_AutomatedFactory;
+            get
+            {
+                return this.TargetThing( ChairOrSpotInd );
+            }
+        }
+
+        internal bool                       HasIngestible
+        {
+            get
+            {
+                return this.TargetThing( OptionalIngestibleInd ) != null;
+            }
+        }
+
+        internal bool                       IsDispenser
+        {
+            get
+            {
+                var thing = this.TargetThing( OptionalIngestibleInd );
+                if( thing == null )
+                {
+                    return false;
+                }
+                return thing is Building_AutomatedFactory;
+            }
+        }
+
+        internal Thing                      Drug
+        {
+            get
+            {
+                var thing = this.TargetThing( OptionalIngestibleInd );
+                if(
+                    ( thing == null )||
+                    ( !thing.IngestibleNow )
+                )
+                {
+                    return null;
+                }
+                return thing;
+            }
+        }
+
+        internal Building_AutomatedFactory  Dispenser
+        {
+            get
+            {
+                return this.TargetThing( OptionalIngestibleInd ) as Building_AutomatedFactory;
+            }
         }
 
         #endregion
 
         #region Detoured Methods
 
-        internal static IEnumerable<Toil> _MakeNewToils( this JobDriver_SocialRelax obj )
+        [DetourMember]
+        internal IEnumerable<Toil>          _MakeNewToils()
         {
-            obj.EndOnDespawnedOrNull( GatherSpotParentInd, JobCondition.Incompletable );
+            this.EndOnDespawnedOrNull( GatherSpotParentInd, JobCondition.Incompletable );
 
-            if( obj.HasChair() )
+            if( this.HasChair )
             {
-                obj.EndOnDespawnedOrNull( ChairOrSpotInd, JobCondition.Incompletable );
+                this.EndOnDespawnedOrNull( ChairOrSpotInd, JobCondition.Incompletable );
             }
             yield return Toils_Reserve.Reserve( ChairOrSpotInd, 1 );
 
-            if( obj.HasDrinkOrDispenser() )
+            if( this.HasIngestible )
             {
-                obj.FailOnDestroyedNullOrForbidden( OptionalDrinkInd );
-                yield return Toils_Reserve.Reserve( OptionalDrinkInd, 1 );
-                if( obj.IsDispenser() )
+                this.FailOnDestroyedNullOrForbidden( OptionalIngestibleInd );
+                yield return Toils_Reserve.Reserve( OptionalIngestibleInd, 1 );
+                if( this.IsDispenser )
                 {
-                    yield return Toils_Goto.GotoThing( OptionalDrinkInd, PathEndMode.InteractionCell );
-                    yield return Toils_FoodSynthesizer.TakeAlcoholFromSynthesizer( OptionalDrinkInd, obj.pawn );
+                    yield return Toils_Goto.GotoThing( OptionalIngestibleInd, PathEndMode.InteractionCell );
+                    // CALLER MUST USE Building_AutomatedFactory.ReserveForUseBy() BEFORE USING THIS METHOD!
+                    //yield return Toils_FoodSynthesizer.TakeDrugFromSynthesizer( OptionalIngestibleInd, this.pawn );
+                    yield return Toils_FoodSynthesizer.TakeFromSynthesier( OptionalIngestibleInd, this.pawn );
                 }
                 else
                 {
-                    yield return Toils_Goto.GotoThing( OptionalDrinkInd, PathEndMode.OnCell );
-                    yield return Toils_Haul.StartCarryThing( OptionalDrinkInd );
+                    yield return Toils_Goto.GotoThing( OptionalIngestibleInd, PathEndMode.OnCell )
+                                           .FailOnSomeonePhysicallyInteracting( OptionalIngestibleInd );
+                    yield return Toils_Haul.StartCarryThing( OptionalIngestibleInd );
                 }
             }
 
@@ -118,26 +147,27 @@ namespace CommunityCoreLibrary.Detour
             var relax = new Toil()
             {
                 defaultCompleteMode = ToilCompleteMode.Delay,
-                defaultDuration = obj.pawn.CurJob.def.joyDuration,
+                defaultDuration = this.pawn.CurJob.def.joyDuration,
                 tickAction = () =>
                 {
-                    var pawnDrawer = obj.pawn.GetPawnDrawTracker();
-                    var pawnFaceTarget = obj.ClosestGatherSpotParentCell();
+                    var pawnDrawer = this.pawn.GetPawnDrawTracker();
+                    var pawnFaceTarget = this.ClosestGatherSpotParentCell;
                     pawnDrawer.rotator.FaceCell( pawnFaceTarget );
-                    obj.pawn.GainComfortFromCellIfPossible();
-                    JoyUtility.JoyTickCheckEnd( obj.pawn, JoyTickFullJoyAction.GoToNextToil, 1f );
+                    this.pawn.GainComfortFromCellIfPossible();
+                    JoyUtility.JoyTickCheckEnd( this.pawn, JoyTickFullJoyAction.GoToNextToil, 1f );
                 }
             };
             relax.AddFinishAction( () =>
-               JoyUtility.TryGainRecRoomThought( obj.pawn )
+               JoyUtility.TryGainRecRoomThought( this.pawn )
             );
             relax.socialMode = RandomSocialMode.SuperActive;
+            Toils_Ingest.AddIngestionEffects( relax, this.pawn, OptionalIngestibleInd, GatherSpotParentInd );
             yield return relax;
-
-            if( obj.IsDrink() )
+            if( this.HasIngestible )
             {
-                yield return Toils_Ingest.FinalizeIngest( obj.pawn, OptionalDrinkInd );
+                yield return Toils_Ingest.FinalizeIngest( this.pawn, OptionalIngestibleInd );
             }
+            yield break;
         }
 
         #endregion

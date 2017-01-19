@@ -21,8 +21,8 @@ namespace CommunityCoreLibrary
                 if( _IsMeal == null )
                 {
                     _IsMeal = new Func<ThingDef,bool>( def =>
-                        ( def.IsIngestible() )&&
-                        ( !def.IsAlcohol() )
+                        ( def.IsIngestible )&&
+                        ( !def.IsDrug )
                     );
                 }
                 return _IsMeal;
@@ -44,33 +44,49 @@ namespace CommunityCoreLibrary
             }
         }
 
-        private static Func<ThingDef,bool>          _IsAlcohol;
-        public static Func<ThingDef,bool>           IsAlcohol
+        private static Func<ThingDef,bool>          _IsJoy;
+        public static Func<ThingDef,bool>           IsJoy
         {
             get
             {
-                if( _IsAlcohol == null )
+                if( _IsJoy == null )
                 {
-                    _IsAlcohol = new Func<ThingDef,bool>( def =>
-                        ( def.IsAlcohol() )
+                    _IsJoy = new Func<ThingDef,bool>( def =>
+                        ( def.IsIngestible )&&
+                        ( def.ingestible.joy > 0f )
                     );
                 }
-                return _IsAlcohol;
+                return _IsJoy;
             }
         }
 
-        private static Func<ThingDef,ThingDef,int>  _SortAlcohol;
-        public static Func<ThingDef,ThingDef,int>   SortAlcohol
+        private static Func<ThingDef,bool>          _IsDrug;
+        public static Func<ThingDef,bool>           IsDrug
         {
             get
             {
-                if( _SortAlcohol == null )
+                if( _IsDrug == null )
                 {
-                    _SortAlcohol = new Func<ThingDef, ThingDef, int>( ( x, y ) =>
+                    _IsDrug = new Func<ThingDef,bool>( def =>
+                        ( def.IsDrug )
+                    );
+                }
+                return _IsDrug;
+            }
+        }
+
+        private static Func<ThingDef,ThingDef,int>  _SortJoy;
+        public static Func<ThingDef,ThingDef,int>   SortJoy
+        {
+            get
+            {
+                if( _SortJoy == null )
+                {
+                    _SortJoy = new Func<ThingDef, ThingDef, int>( ( x, y ) =>
                         ( x.ingestible.joy > y.ingestible.joy ) ? -1 : 1
                     );
                 }
-                return _SortAlcohol;
+                return _SortJoy;
             }
         }
 

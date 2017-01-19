@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,7 +8,7 @@
     <RootNamespace>CCLModTweaks</RootNamespace>
     <AssemblyName>CCLModTweaks</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.14.0</ReleaseVersion>
+    <ReleaseVersion>0.15.0</ReleaseVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,10 +35,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Community Core Library">
-      <HintPath>..\bin\Community Core Library.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\bin\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
@@ -50,14 +46,36 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DefInjectionQualifiers\WorkTableCompPowerLowIdleDrawTickerChangerQualifier.cs" />
-    <Compile Include="DefInjectionQualifiers\WorkTableCompPowerLowIdleDrawCompAdderQualifier.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerWorkTable.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompWorkTable.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompResearchBench.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerResearchBench.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompWatchableBuilding.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerWatchableBuilding.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompFoodDispenser.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerFoodDispenser.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompPlantGrower.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerRareTickerPlantGrower.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyGrowerCompPlantGrower.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompDoor.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompFacility.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerFacility.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyHopperUserCompFoodDispenser.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompRefrigerator.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerRareTickerRefrigerator.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerCompDeepDrill.cs" />
+    <Compile Include="DefInjectionQualifiers\QualifyLowPowerNormalTickerDeepDrill.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="DefInjectionQualifiers\" />
+    <ProjectReference Include="..\CommunityCoreLibrary.csproj">
+      <Project>{A36BEEB2-7379-475B-B537-827E34571962}</Project>
+      <Name>CommunityCoreLibrary</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "$(ProjectDir)PostBuild.bat" $(ConfigurationName) "$(TargetPath)" $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>call "$(ProjectDir)PostBuild.bat" $(ConfigurationName) "$(TargetPath)" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

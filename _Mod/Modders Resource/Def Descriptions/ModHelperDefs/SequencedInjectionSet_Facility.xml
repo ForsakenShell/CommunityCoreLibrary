@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <!--
+
+    Default Sequence:   InjectionSequence.MainLoad
+    Default Timing:     InjectionTiming.Priority_8
+
+    Target Type:        Multi, ThingDef
+
+    <li Class="CommunityCoreLibrary.SequencedInjectionSet_Facility">
+
+        <facility>ThingDef</facility>   [required] Facility to inject into buildings
+
+        <overrideBedOnly>bool</overrideBedOnly>
+                                        [optional] If the CompProperties_AffectedByFacilities on the target is CommunityCoreLibrary.CompProperties_AffectedByFacilities then set overrideBedOnly to the value supplied
+
+    </li>
+
+    -->
+
+</Defs>

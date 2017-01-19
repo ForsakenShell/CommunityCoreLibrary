@@ -16,7 +16,7 @@ namespace CommunityCoreLibrary.Detour
     {
 
         // Don't bother reflecting this, just create your own, it's only used in one place
-        internal static Vector2     _optionsScroll = new Vector2();
+        internal static Vector2             _optionsScroll = new Vector2();
 
 
         #region Detoured Methods
@@ -46,7 +46,8 @@ namespace CommunityCoreLibrary.Detour
         1.0 +--------------------------------------------------------------+
         */
 
-        internal static void _MainMenuOnGUI()
+        [DetourMember( typeof( MainMenuDrawer ), InjectionSequence.DLLLoad )]
+        internal static void                _MainMenuOnGUI()
         {
             #region Version
             VersionControl.DrawInfoInCorner();
@@ -143,7 +144,7 @@ namespace CommunityCoreLibrary.Detour
             menuOptionsRect.y += MainMenuDrawerExt.OptionListSpacing;
             GUI.BeginGroup( menuOptionsRect );
             
-            MainMenuDrawer.DoMainMenuButtons(
+            MainMenuDrawer.DoMainMenuControls(
                 menuOptionsRect,
                 MainMenuDrawerExt.AnyMapFiles );
             
@@ -151,7 +152,8 @@ namespace CommunityCoreLibrary.Detour
             #endregion
         }
 
-        internal static void _DoMainMenuButtons( Rect rect, bool anyMapFiles )
+        [DetourMember( typeof( MainMenuDrawer ), InjectionSequence.DLLLoad ) ]
+        internal static void                _DoMainMenuControls( Rect rect, bool anyMapFiles )
         {
             #region Set Single Column Rect
             var optionColumnRect = new Rect( 0.0f, 0.0f, MainMenuDrawerExt.GameRectWidth, rect.height );

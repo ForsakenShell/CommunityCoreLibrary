@@ -12,15 +12,16 @@ namespace CommunityCoreLibrary.Detour
     internal static class _PlaySettings
     {
 
-        internal static List<ToggleSettingDef>      toggleSettingDefs;
+        internal static List<ToggleSettingDef>  toggleSettingDefs;
 
-        static _PlaySettings()
+        static                              _PlaySettings()
         {
             toggleSettingDefs = DefDatabase<ToggleSettingDef>.AllDefs.ToList();
             toggleSettingDefs.Sort( (x, y) => x.order > y.order ? 1 : -1 );
         }
 
-        internal static void _ExposeData( this PlaySettings _this )
+        [DetourMember( typeof( PlaySettings ) )]
+        internal static void                _ExposeData( this PlaySettings _this )
         {
             foreach( var toggleSetting in toggleSettingDefs )
             {
@@ -37,7 +38,8 @@ namespace CommunityCoreLibrary.Detour
             }
         }
 
-        internal static void _DoPlaySettingsGlobalControls( this PlaySettings _this, WidgetRow row )
+        [DetourMember( typeof( PlaySettings ) )]
+        internal static void                _DoPlaySettingsGlobalControls( this PlaySettings _this, WidgetRow row )
         {
             foreach( var toggleSetting in toggleSettingDefs )
             {

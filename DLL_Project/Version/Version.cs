@@ -12,8 +12,8 @@ namespace CommunityCoreLibrary
 
         #region Instance Data
 
-        private static System.Version       versionMin = new System.Version( "0.14.0" );
-        private const string                versionCurrentInt = "0.14.3.1";
+        private static System.Version       versionMin = new System.Version( "0.15.0" );
+        private const string                versionCurrentInt = "0.15.0";
 
         private static System.Version       versionCurrent;
 
@@ -120,7 +120,7 @@ namespace CommunityCoreLibrary
                 {
                     return VersionCompare.LessThanMin;
                 }
-                else if(
+                if(
                     ( v.Major > Version.Current.Major )||
                     ( v.Minor > Version.Current.Minor )||
                     ( v.Build > Version.Current.Build )
@@ -128,7 +128,7 @@ namespace CommunityCoreLibrary
                 {
                     return VersionCompare.GreaterThanMax;
                 }
-                else if(
+                if(
                     ( v.Major == Version.Current.Major )&&
                     ( v.Minor == Version.Current.Minor )&&
                     ( v.Build == Version.Current.Build )
@@ -138,7 +138,7 @@ namespace CommunityCoreLibrary
                     {
                         return VersionCompare.WithinRange;
                     }
-                    else if( v.Revision > Version.Current.Revision )
+                    if( v.Revision > Version.Current.Revision )
                     {
                         return VersionCompare.GreaterThanMax;
                     }
@@ -156,7 +156,7 @@ namespace CommunityCoreLibrary
                 {
                     return VersionCompare.LessThanMin;
                 }
-                else if(
+                if(
                     ( v.Major > Version.Current.Major )||
                     ( v.Minor > Version.Current.Minor )||
                     ( v.Build > Version.Current.Build )
@@ -164,7 +164,7 @@ namespace CommunityCoreLibrary
                 {
                     return VersionCompare.GreaterThanMax;
                 }
-                else if(
+                if(
                     ( v.Major == Version.Current.Major )&&
                     ( v.Minor == Version.Current.Minor )&&
                     ( v.Build == Version.Current.Build )
@@ -178,7 +178,7 @@ namespace CommunityCoreLibrary
 
         #endregion
 
-        public static void                  DrawAt( Rect rect )
+        public static void                  DrawAt( Rect rect, float offsetFromTop )
         {
             Color color = Color.white;
             string str = string.Empty;
@@ -211,8 +211,9 @@ namespace CommunityCoreLibrary
                     str = "CCLBuildUpToDate".Translate();
                 }
             }
+            rect.y += offsetFromTop;
             rect.y -= 5f;
-            rect.y += Text.CalcHeight( str, rect.width );
+            rect.height = Text.CalcHeight( str, rect.width );
             GUI.color = color;
             Widgets.Label( rect, str );
             GUI.color = Color.white;
