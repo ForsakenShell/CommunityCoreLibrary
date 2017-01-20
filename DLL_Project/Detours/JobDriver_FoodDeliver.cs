@@ -99,7 +99,7 @@ namespace CommunityCoreLibrary.Detour
             dropFoodAtTarget.initAction = new Action( () =>
             {
                 Thing resultingThing;
-                this.pawn.carrier.TryDropCarriedThing( dropCell, ThingPlaceMode.Direct, out resultingThing );
+                this.pawn.carryTracker.TryDropCarriedThing( dropCell, ThingPlaceMode.Direct, out resultingThing );
             } );
             dropFoodAtTarget.defaultCompleteMode = ToilCompleteMode.Instant;
             yield return dropFoodAtTarget;

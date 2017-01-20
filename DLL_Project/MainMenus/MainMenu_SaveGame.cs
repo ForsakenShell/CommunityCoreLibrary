@@ -27,7 +27,7 @@ namespace CommunityCoreLibrary
 		public override void ClickAction()
 		{
             MainMenuDrawer_Extensions.CloseMainTab();
-			Find.WindowStack.Add( (Window)new Dialog_MapList_Save() );
+			Find.WindowStack.Add( (Window)new Dialog_SaveFileList_Save() );
 		}
 
 	}

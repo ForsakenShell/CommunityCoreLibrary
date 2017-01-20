@@ -72,6 +72,7 @@ namespace CommunityCoreLibrary.Detour
             var overdose = pawn.health.hediffSet.GetFirstHediffOfDef( HediffDefOf.DrugOverdose );
             var ingestibleThing = GenClosest.ClosestThingReachable(
                 pawn.Position,
+                pawn.Map,
                 ThingRequest.ForGroup( ThingRequestGroup.Drug ),
                 PathEndMode.InteractionCell,
                 TraverseParms.For(

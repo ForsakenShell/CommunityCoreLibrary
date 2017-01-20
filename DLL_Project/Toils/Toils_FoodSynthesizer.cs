@@ -48,8 +48,8 @@ namespace CommunityCoreLibrary
                     }
                     else
                     {
-                        taker.carrier.TryStartCarry( thingToTake );
-                        taker.jobs.curJob.SetTarget( ind, (TargetInfo) taker.carrier.CarriedThing );
+                        taker.carryTracker.TryStartCarry( thingToTake );
+                        taker.jobs.curJob.SetTarget( ind, taker.carryTracker.CarriedThing );
                     }
                 } );
             }

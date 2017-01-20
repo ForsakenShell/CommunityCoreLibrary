@@ -63,7 +63,7 @@ namespace CommunityCoreLibrary.MiniMap
 			// paint all cells occupied by thing in 'color'.
 			foreach( var cell in thing.OccupiedRect().Cells )
 			{
-				if( cell.InBounds() )
+				if( cell.InBounds( thing.Map ) )
 				{
 					texture.SetPixel( cell.x, cell.z, color );
 				}

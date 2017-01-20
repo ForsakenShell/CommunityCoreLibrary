@@ -176,7 +176,7 @@ namespace CommunityCoreLibrary.MiniMap
             iconRect.y += iconSize + iconMargin;
 
             // scale icon
-            bool scaled = Mathf.Approximately( windowRect.width, Find.Map.Size.x ) && Mathf.Approximately( windowRect.height, Find.Map.Size.z );
+            bool scaled = Mathf.Approximately( windowRect.width, Find.VisibleMap.Size.x ) && Mathf.Approximately( windowRect.height, Find.VisibleMap.Size.z );
             TooltipHandler.TipRegion( iconRect, scaled ? "MiniMap.DefaultSize".Translate() : "MiniMap.OneToOneScale".Translate() );
             if ( Widgets.ButtonImage( iconRect, _scaleIcon ) )
             {
@@ -218,8 +218,8 @@ namespace CommunityCoreLibrary.MiniMap
                 }
                 else
                 {
-                    windowRect.width = Find.Map.Size.x;
-                    windowRect.height = Find.Map.Size.z;
+                    windowRect.width = Find.VisibleMap.Size.x;
+                    windowRect.height = Find.VisibleMap.Size.z;
                     ClampWindowToScreen();
                 }
 

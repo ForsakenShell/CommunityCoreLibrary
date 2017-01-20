@@ -7,6 +7,7 @@ using Verse;
 
 namespace CommunityCoreLibrary
 {
+    // TODO: probably should switch to non-static members?
 
     [StaticConstructorOnStartup]
     public class HideItemManager : MapComponent
@@ -30,11 +31,11 @@ namespace CommunityCoreLibrary
             hiderBuildings = new Dictionary<IntVec3, Thing>();
         }
 
-        private static List<Thing>          listHasGUIOverlay
+        private List<Thing>                 listHasGUIOverlay
         {
             get
             {
-                return ThingRequestGroup.HasGUIOverlay.ListOfThingsByGroup();
+                return ThingRequestGroup.HasGUIOverlay.ListOfThingsByGroup( map );
             }
         }
 

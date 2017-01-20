@@ -26,6 +26,8 @@ namespace CommunityCoreLibrary.Detour
 #endif
 #endif
 
+        /* TODO: update to A16
+
         [DetourMember( typeof( ThingListGroupHelper ) )]
         internal static bool                _Includes( this ThingRequestGroup group, ThingDef def )
         {
@@ -209,6 +211,8 @@ namespace CommunityCoreLibrary.Detour
                 throw new ArgumentException( "group" );
             }
         }
+
+    */
 
     }
 

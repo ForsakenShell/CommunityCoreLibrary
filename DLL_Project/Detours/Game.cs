@@ -59,6 +59,8 @@ namespace CommunityCoreLibrary.Detour
 
         #region Detoured Methods
 
+        /* TODO: replace with LoadGame
+
         [DetourMember]
         internal void                       _LoadData()
         {
@@ -141,7 +143,7 @@ namespace CommunityCoreLibrary.Detour
 
             // Finally, call the subcontrollers that need to do stuff after a game load
             Controller.SubControllers.PostLoad();
-        }
+        }*/
 
         #endregion
 

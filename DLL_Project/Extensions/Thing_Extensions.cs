@@ -404,7 +404,7 @@ namespace CommunityCoreLibrary
                 // Get adjacent cells bound by room
                 cells = GenAdj.CellsAdjacentCardinal( thing )
                     .Where( c =>
-                        ( c.GetRoom() == thing.GetRoom() )
+                        ( c.GetRoom( thing.Map ) == thing.GetRoom() )
                     )
                     .ToList();
             }
@@ -458,7 +458,7 @@ namespace CommunityCoreLibrary
                 // Get adjacent cells bound by room
                 cells = GenAdj.CellsAdjacentCardinal( thing )
                     .Where( c =>
-                        ( c.GetRoom() == thing.GetRoom() )
+                        ( c.GetRoom( thing.Map ) == thing.GetRoom() )
                     )
                     .ToList();
             }

@@ -11,13 +11,14 @@ namespace CommunityCoreLibrary
     public static class ThingRequestGroup_Extensions
     {
 
-        public static List<Thing>           ListOfThingsByGroup( this ThingRequestGroup group )
+        public static List<Thing>           ListOfThingsByGroup( this ThingRequestGroup group, Map map )
         {
-            var listsByGroup = from map in Find.Maps
-                               from list in map.listerThings.ListsByGroup()
-                               select list;
+            if (map == null)
+            {
+                return Find.Maps.SelectMany( m => m.listerThings.ListsByGroup()[ (int)group] ).ToList();
+            }
 
-            return listsByGroup[ (int) group ];
+            return map.listerThings.ListsByGroup()[ (int) group ];
         }
 
     }

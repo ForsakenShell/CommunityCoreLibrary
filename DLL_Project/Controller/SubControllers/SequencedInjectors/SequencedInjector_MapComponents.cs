@@ -28,9 +28,9 @@ namespace CommunityCoreLibrary
             {   // No error but only do it in the correct sequence and timing
                 return true;
             }
-            var existingComponents = from map in Find.Maps
-                                     from component in map.components
-                                     select component;
+            var existingComponents = ( from map in Find.Maps
+                                       from component in map.components
+                                       select component ).ToList();
             var injected = true;
             foreach( var mod in Controller.Data.Mods )
             {
@@ -41,7 +41,7 @@ namespace CommunityCoreLibrary
                     {
                         foreach( var mapComponent in mapComponentsForAssembly )
                         {
-                            if( !existingComponents.Exists( c => c.GetType() == mapComponent ) )
+                            if( !existingComponents.Any( c => c.GetType() == mapComponent ) )
                             {
                                 var componentObject = (MapComponent) Activator.CreateInstance( mapComponent );
                                 if( componentObject == null )

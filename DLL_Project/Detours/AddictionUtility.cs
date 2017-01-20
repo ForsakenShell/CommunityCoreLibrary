@@ -62,7 +62,7 @@ namespace CommunityCoreLibrary.Detour
             for( int index = 0; index < listOfSpawnedDrugs.Count; ++index )
             {
                 var thing = listOfSpawnedDrugs[ index ];
-                if( !thing.Position.Fogged() )
+                if( !thing.Position.Fogged( thing.Map ) )
                 {
                     var synthesizer = thing as Building_AutomatedFactory;
                     if( synthesizer != null )

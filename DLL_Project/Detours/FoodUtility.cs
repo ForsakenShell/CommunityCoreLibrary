@@ -12,6 +12,8 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 
+// TODO: I assume in general these need to be updated to match the internal changes in A16,
+//       but for now I'm making the minimal changes to compile
 namespace CommunityCoreLibrary.Detour
 {
 
@@ -283,7 +285,7 @@ namespace CommunityCoreLibrary.Detour
                 {
                     ingestThoughts.Add( ThoughtDefOf.AteAwfulMeal );
                 }
-                else if( mealDef.ingestible.tastesRaw )
+                else if( mealDef.ingestible.tasteThought == ThoughtDefOf.AteRawFood )
                 {
                     ingestThoughts.Add( ThoughtDefOf.AteRawFood );
                 }
@@ -396,7 +398,7 @@ namespace CommunityCoreLibrary.Detour
 
             if( getter.RaceProps.Humanlike )
             {
-                var thingsRequested = Find.ListerThings.ThingsMatching( thingRequest );
+                var thingsRequested = getter.Map.listerThings.ThingsMatching( thingRequest );
 
 #if _I_AM_A_POTATO_
                 DumpThingsRequestedForGroup( thingRequest, thingsRequested );
@@ -435,6 +437,7 @@ namespace CommunityCoreLibrary.Detour
                 }
                 potentialFoodSource = GenClosest.ClosestThingReachable(
                     getter.Position,
+                    getter.Map,
                     thingRequest,
                     PathEndMode.ClosestTouch,
                     TraverseParms.For(
@@ -458,6 +461,7 @@ namespace CommunityCoreLibrary.Detour
                     validator.desperate = true;
                     potentialFoodSource = GenClosest.ClosestThingReachable(
                         getter.Position,
+                        getter.Map,
                         thingRequest,
                         PathEndMode.ClosestTouch,
                         TraverseParms.For(
@@ -591,7 +595,7 @@ namespace CommunityCoreLibrary.Detour
 #endif
                         return false;
                     }
-                    if( !t.InteractionCell.Standable() )
+                    if( !t.InteractionCell.Standable( t.Map ) )
                     {
 #if _I_AM_A_POTATO_
                         CCL_Log.Message(
@@ -602,15 +606,12 @@ namespace CommunityCoreLibrary.Detour
 
                         return false;
                     }
-                    if( !getter.Position.CanReach(
-                        t.InteractionCell,
-                        PathEndMode.OnCell,
-                        TraverseParms.For(
+                    if( !ReachabilityUtility.CanReach(
                             getter,
-                            Danger.Some,
-                            TraverseMode.ByPawn,
-                            false )
-                    ) )
+                            t.InteractionCell,
+                            PathEndMode.OnCell,
+                            Danger.Some )
+                    )
                     {
 #if _I_AM_A_POTATO_
                         CCL_Log.Message(

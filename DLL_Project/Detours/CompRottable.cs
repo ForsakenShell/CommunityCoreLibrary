@@ -105,7 +105,8 @@ namespace CommunityCoreLibrary.Detour
                 return;
             }
             float num = this.RotProgress;
-            this.RotProgress += (float) Mathf.RoundToInt( 1f * GenTemperature.RotRateAtTemperature( GenTemperature.GetTemperatureForCell( this.parent.PositionHeld ) ) * 250f );
+            this.RotProgress += (float) Mathf.RoundToInt( 1f * GenTemperature.RotRateAtTemperature(
+                GenTemperature.GetTemperatureForCell( this.parent.PositionHeld, this.parent.Map ) ) * 250f );
             if(
                 ( this.Stage == RotStage.Rotting )&&
                 ( this.PropsRot.rotDestroys )
@@ -124,7 +125,7 @@ namespace CommunityCoreLibrary.Detour
                     ( this.PropsRot.rotDamagePerDay > 0.0f )
                 )
                 {
-                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.rotDamagePerDay ), (Thing) null, new BodyPartDamageInfo?(), (ThingDef) null ) );
+                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.rotDamagePerDay ) ) );
                 }
                 else
                 {
@@ -136,7 +137,7 @@ namespace CommunityCoreLibrary.Detour
                     {
                         return;
                     }
-                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.dessicatedDamagePerDay ), (Thing) null, new BodyPartDamageInfo?(), (ThingDef) null ) );
+                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.dessicatedDamagePerDay ) ) );
                 }
             }
         }
@@ -163,7 +164,8 @@ namespace CommunityCoreLibrary.Detour
             }
             else if( ( this.PropsRot.TicksToRotStart - this.RotProgress ) > 0.0f )
             {
-                float num = GenTemperature.RotRateAtTemperature( Mathf.RoundToInt( GenTemperature.GetTemperatureForCell( this.parent.PositionHeld ) ) );
+                float num = GenTemperature.RotRateAtTemperature( Mathf.RoundToInt(
+                    GenTemperature.GetTemperatureForCell( this.parent.PositionHeld, this.parent.Map ) ) );
                 int rotAtCurrentTemp = this.TicksUntilRotAtCurrentTemp;
                 if( num < 1.0f / 1000.0f )
                 {

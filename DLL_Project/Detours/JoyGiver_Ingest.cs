@@ -57,7 +57,7 @@ namespace CommunityCoreLibrary.Detour
             );
             
             var container = pawn.inventory.innerContainer;
-            for( int index = 0; index < innerContainer.Count; index++ )
+            for( int index = 0; index < container.Count; index++ )
             {
                 var containerItem = container[ index ];
                 if(
@@ -145,11 +145,11 @@ namespace CommunityCoreLibrary.Detour
             var job = new Job( JobDefOf.Ingest, ingestible );
             if( synthesizer == null )
             {
-                job.maxNumToCarry = Mathf.Min( ingestible.stackCount, ingestible.def.ingestible.maxNumToIngestAtOnce );
+                job.count = Mathf.Min( ingestible.stackCount, ingestible.def.ingestible.maxNumToIngestAtOnce );
             }
             else
             {
-                job.maxNumToCarry = 1;
+                job.count = 1;
             }
             return job;
         }

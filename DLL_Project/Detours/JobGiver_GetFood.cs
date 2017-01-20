@@ -155,7 +155,7 @@ namespace CommunityCoreLibrary.Detour
                 return null;
             }
             ThingDef resourceDef = null;
-            var firstItem = hopper.Position.GetFirstItem();
+            var firstItem = hopper.Position.GetFirstItem( hopper.Map );
             if( firstItem != null )
             {
                 if(
@@ -182,8 +182,8 @@ namespace CommunityCoreLibrary.Detour
             }
             List<Thing> list =
                 resourceDef != null
-                ? Find.Map.listerThings.ThingsOfDef( resourceDef )
-                : Find.Map.listerThings.ThingsInGroup( ThingRequestGroup.FoodSourceNotPlantOrTree );
+                ? hopper.Map.listerThings.ThingsOfDef( resourceDef )
+                : hopper.Map.listerThings.ThingsInGroup( ThingRequestGroup.FoodSourceNotPlantOrTree );
             for( int index = 0; index < list.Count; ++index )
             {
                 Thing t = list[ index ];
@@ -195,7 +195,7 @@ namespace CommunityCoreLibrary.Detour
                     )&&
                     ( HaulAIUtility.PawnCanAutomaticallyHaul( pawn, t ) )&&
                     (
-                        ( Find.SlotGroupManager.SlotGroupAt( hopper.Position ).Settings.AllowedToAccept( t ) )&&
+                        ( hopper.Map.slotGroupManager.SlotGroupAt( hopper.Position ).Settings.AllowedToAccept( t ) )&&
                         ( HaulAIUtility.StoragePriorityAtFor( t.Position, t ) < hopperSgp.GetSlotGroup().Settings.Priority )
                     )
                 )

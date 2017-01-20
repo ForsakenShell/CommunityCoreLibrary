@@ -154,7 +154,7 @@ namespace CommunityCoreLibrary
 
             backStory.ResolveReferences();
             backStory.PostLoad();
-            backStory.uniqueSaveKey = this.UniqueSaveKey();
+            backStory.identifier = this.UniqueSaveKey();
 
             bool configErrors = false;
             string configErrorList = string.Empty;

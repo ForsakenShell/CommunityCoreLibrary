@@ -33,7 +33,7 @@ namespace CommunityCoreLibrary.MiniMap
 				var position = Find.VisibleMap.cellIndices.IndexToCell( i );
 
 				// paint it... brownish?
-				texture.SetPixel( position.x, position.z, Find.Map.terrainGrid.TerrainAt( i ).color );
+				texture.SetPixel( position.x, position.z, Find.VisibleMap.terrainGrid.TerrainAt( i ).color );
 			}
 		}
 

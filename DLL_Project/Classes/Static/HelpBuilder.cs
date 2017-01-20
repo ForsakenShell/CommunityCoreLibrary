@@ -761,34 +761,28 @@ namespace CommunityCoreLibrary
                         ) ) )
                     )
                     {
-                        foreach( var comp in hediffDef.comps )
+                        var verbs = from comp in hediffDef.comps
+                                    where comp.compClass == typeof( HediffComp_VerbGiver )
+                                    where !( comp as HediffCompProperties_VerbGiver ).verbs.NullOrEmpty()
+                                    from verb in ( comp as HediffCompProperties_VerbGiver ).verbs
+                                    where verb.verbClass == typeof( Verb_MeleeAttack )
+                                    select verb;
+
+                        foreach ( var verb in verbs )
                         {
-                            if( comp.compClass == typeof( HediffComp_VerbGiver ) )
-                            {
-                                if( !comp.verbs.NullOrEmpty() )
-                                {
-                                    foreach( var verb in comp.verbs )
-                                    {
-                                        if( verb.verbClass == typeof( Verb_MeleeAttack ) )
-                                        {
-                                            statParts.Add( new HelpDetailSection(
-                                                    "MeleeAttack".Translate( verb.meleeDamageDef.label ),
-                                                    new[]
-                                                    {
-                                                        "MeleeWarmupTime".Translate(),
-                                                        "StatsReport_MeleeDamage".Translate()
-                                                    },
-                                                    null,
-                                                    new[]
-                                                    {
-                                                        verb.defaultCooldownTicks.ToString(),
-                                                        verb.meleeDamageBaseAmount.ToString()
-                                                    }
-                                                ) );
-                                        }
-                                    }
-                                }
-                            }
+                            statParts.Add( new HelpDetailSection(
+                                           "MeleeAttack".Translate(verb.meleeDamageDef.label),
+                                           new[]
+                                           {
+                                               "MeleeWarmupTime".Translate(),
+                                               "StatsReport_MeleeDamage".Translate()
+                                           },
+                                           null,
+                                           new[]
+                                           {
+                                               verb.defaultCooldownTime.ToString(),
+                                               verb.meleeDamageBaseAmount.ToString()
+                                           } ) );
                         }
                     }
 

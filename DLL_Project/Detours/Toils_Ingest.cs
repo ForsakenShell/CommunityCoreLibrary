@@ -38,8 +38,8 @@ namespace CommunityCoreLibrary.Detour
                 }
                 else
                 {
-                    pawn.carrier.TryStartCarry( meal );
-                    pawn.jobs.curJob.targetA = pawn.carrier.CarriedThing;
+                    pawn.carryTracker.TryStartCarry( meal );
+                    pawn.jobs.curJob.targetA = pawn.carryTracker.CarriedThing;
                 }
             } );
             return toil;

@@ -380,7 +380,7 @@ namespace CommunityCoreLibrary
 				// Full-power when any pawn is standing on any monitored cell...
 				foreach( IntVec3 curPos in scanPosition )
 				{
-					var pawn = Find.ThingGrid.ThingAt<Pawn>( curPos );
+					var pawn = parent.Map.thingGrid.ThingAt<Pawn>( curPos );
 					if( pawn != null )
 					{
 						if(
@@ -531,7 +531,8 @@ namespace CommunityCoreLibrary
     				if( IdleProps.operationalMode == LowIdleDrawMode.WhenNear )
     				{
     					// And the adjacent cells too
-    					foreach( IntVec3 curPos in GenAdj.CellsAdjacent8Way( parent.InteractionCell ) )
+                        // TODO: check the logic on this
+    					foreach( IntVec3 curPos in GenAdj.CellsAdjacent8Way( parent.InteractionCell, parent.Rotation, parent.def.Size ) )
     					{
     						AddScanPositionIfAllowed( curPos );
     					}
@@ -566,7 +567,7 @@ namespace CommunityCoreLibrary
     					// Group use adds cells "in front" of it
     					// Only really used by TVs
                         // WatchBuildingUtility already filters invalid cells for us
-                        var cells = WatchBuildingUtility.CalculateWatchCells( parent.def, parent.Position, parent.Rotation );
+                        var cells = WatchBuildingUtility.CalculateWatchCells( parent.def, parent.Position, parent.Rotation, parent.Map );
     					foreach( var curPos in cells )
     					{
     						scanPosition.Add( curPos );
@@ -599,7 +600,7 @@ namespace CommunityCoreLibrary
 		void AddScanPositionIfAllowed( IntVec3 position )
 		{
 			// Look at each thing at this position and check it's passability
-			foreach( Thing curThing in Find.ThingGrid.ThingsListAt( position ) )
+			foreach( Thing curThing in parent.Map.thingGrid.ThingsListAt( position ) )
 			{
 				if(
 					( curThing.def.passability == Traversability.Impassable ) ||
