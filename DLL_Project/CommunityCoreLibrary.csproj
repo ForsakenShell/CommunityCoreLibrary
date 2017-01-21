@@ -87,6 +87,9 @@
     <Compile Include="Defs\AdvancedResearchDef.cs" />
     <Compile Include="ThingComps\CompRangedGizmoGiver.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_ShowEnvironment.cs" />
+    <Compile Include="ToggleSettings\ToggleSetting_LockNorthUp.cs" />
+    <Compile Include="ToggleSettings\ToggleSetting_UsePlanetDayNightSystem.cs" />
+    <Compile Include="ToggleSettings\ToggleSetting_ExpandingIcons.cs" />
     <Compile Include="Toils\Toils_Common.cs" />
     <Compile Include="ThingComps\CompRefrigerated.cs" />
     <Compile Include="CompProperties\CompProperties_ColoredLight.cs" />

@@ -35,6 +35,7 @@
     <defName>ToggleShowColonistBar</defName>
     <labelKey>ShowColonistBarToggleButton</labelKey>
     <saveKey>showColonistBar</saveKey>
+    <playingOnly>true</playingOnly>
     <iconTexture>UI/Buttons/ShowColonistBar</iconTexture>
     <soundDef>MouseoverButtonToggle</soundDef>
     <order>50</order>
@@ -78,10 +79,47 @@
     <toggleClass>CommunityCoreLibrary.ToggleSetting_ResourceReadoutCategorized</toggleClass>
   </CommunityCoreLibrary.ToggleSettingDef>
 
+  <CommunityCoreLibrary.ToggleSettingDef>
+    <defName>ToggleLockNorthUp</defName>
+    <labelKey>LockNorthUpToggleButton</labelKey>
+    <saveKey>lockNorthUp</saveKey>
+    <worldView>true</worldView>
+    <iconTexture>UI/Buttons/LockNorthUp</iconTexture>
+    <soundDef>MouseoverButtonToggle</soundDef>
+    <order>90</order>
+    <toggleClass>CommunityCoreLibrary.ToggleSetting_LockNorthUp</toggleClass>
+  </CommunityCoreLibrary.ToggleSettingDef>
+
+  <CommunityCoreLibrary.ToggleSettingDef>
+    <defName>ToggleUsePlanetDayNightSystem</defName>
+    <labelKey>UsePlanetDayNightSystemToggleButton</labelKey>
+    <saveKey>usePlanetDayNightSystem</saveKey>
+    <worldView>true</worldView>
+    <playingOnly>true</playingOnly>
+    <iconTexture>UI/Buttons/UsePlanetDayNightSystem</iconTexture>
+    <soundDef>MouseoverButtonToggle</soundDef>
+    <order>100</order>
+    <toggleClass>CommunityCoreLibrary.ToggleSetting_UsePlanetDayNightSystem</toggleClass>
+  </CommunityCoreLibrary.ToggleSettingDef>
+
+  <CommunityCoreLibrary.ToggleSettingDef>
+    <defName>ToggleExpandingIcons</defName>
+    <labelKey>ExpandingIconsToggleButton</labelKey>
+    <saveKey>expandingIcons</saveKey>
+    <worldView>true</worldView>
+    <iconTexture>UI/Buttons/ExpandingIcons</iconTexture>
+    <soundDef>MouseoverButtonToggle</soundDef>
+    <order>110</order>
+    <toggleClass>CommunityCoreLibrary.ToggleSetting_ExpandingIcons</toggleClass>
+  </CommunityCoreLibrary.ToggleSettingDef>
+
   <!--
     <CommunityCoreLibrary.ToggleSettingDef>
         <defName></defName>
         <labelKey></labelKey>
+        <exposeValue></exposeValue>
+        <worldView></worldView>
+        <playingOnly></playingOnly>
         <saveKey></saveKey>
         <iconTexture></iconTexture>
         <soundDef></soundDef>
