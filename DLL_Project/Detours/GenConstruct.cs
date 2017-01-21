@@ -11,10 +11,10 @@ namespace CommunityCoreLibrary.Detour
 
     internal static class _GenConstruct
     {
-        
+
         // HARMONY CANDIDATE: prefix
         [DetourMember( typeof( GenConstruct ) )]
-        internal static bool                _CanBuildOnTerrain( BuildableDef entDef, IntVec3 c, Rot4 rot, Map map, Thing thingToIgnore = null )
+        internal static bool                _CanBuildOnTerrain( BuildableDef entDef, IntVec3 c, Map map, Rot4 rot, Thing thingToIgnore = null )
         {
             // changed (processing restrictions, if any) {
             CompProperties_RestrictedPlacement Restrictions = null;

@@ -221,8 +221,9 @@ namespace CommunityCoreLibrary
                 // Get list of things
                 var thingDefs =
                     DefDatabase< ThingDef >.AllDefsListForReading.Where( t => (
-                        ( t.designationCategory.defName == designationCategoryDef.defName )
-                        && ( !t.IsLockedOut() )
+                        ( t.designationCategory != null )&&
+                        ( t.designationCategory.defName == designationCategoryDef.defName )&&
+                        ( !t.IsLockedOut() )
                     ) ).ToList();
 
                 if( !thingDefs.NullOrEmpty() )
@@ -279,23 +280,15 @@ namespace CommunityCoreLibrary
             // or is listed in biomes (natural terrain). This excludes terrains that are not normally visible (e.g. Underwall).
             string[] rockySuffixes = new[] { "_Rough", "_Smooth", "_RoughHewn" };
 
-            List<TerrainDef> terrainDefs =
-                DefDatabase<TerrainDef>.AllDefsListForReading
-                                       .Where( 
-                                            // not buildable #TODO: figure out if this is the right way to check this
-                                            t => ( t.designationCategory == null ||
-                                                   t.designationCategory.defName.ToLower() == "none" )
-                                            && (
-                                                // is a type generated from rock
-                                                rockySuffixes.Any( s => t.defName.EndsWith( s ) )
+            List<TerrainDef> terrainDefs = ( from terrain in DefDatabase<TerrainDef>.AllDefsListForReading
+                                             where terrain != null
+                                             where terrain.designationCategory == null || terrain.designationCategory.defName.ToLower() == "none"
+                                             where rockySuffixes.Any( suffix => !terrain.defName.NullOrEmpty() && terrain.defName.EndsWith( suffix ) ) ||
+                                                   DefDatabase<BiomeDef>.AllDefsListForReading.Any( biome => biome.AllTerrainDefs().Contains( terrain ) )
+                                             select terrain
+                                           ).ToList();
 
-                                                // or is listed in any biome
-                                                || DefDatabase<BiomeDef>.AllDefsListForReading.Any(
-                                                    b => b.AllTerrainDefs().Contains( t ) )
-                                                ) )
-                                       .ToList();
-
-            if( !terrainDefs.NullOrEmpty() )
+            if ( !terrainDefs.NullOrEmpty() )
             {
                 // Get help category
                 var helpCategoryDef = HelpCategoryForKey( HelpCategoryDefOf.TerrainHelp, "AutoHelpSubCategoryTerrain".Translate(), "AutoHelpCategoryTerrain".Translate() );
@@ -307,8 +300,10 @@ namespace CommunityCoreLibrary
             // Get list of buildable floors per designation category
             foreach ( var categoryDef in DefDatabase<DesignationCategoryDef>.AllDefsListForReading )
             {
-                terrainDefs =
-                    DefDatabase<TerrainDef>.AllDefsListForReading.Where( t => t.designationCategory.defName == categoryDef.defName ).ToList();
+                terrainDefs = ( from terrain in DefDatabase<TerrainDef>.AllDefsListForReading
+                                where terrain.designationCategory != null && terrain.designationCategory.defName == categoryDef.defName
+                                select terrain
+                              ).ToList();
 
                 if( !terrainDefs.NullOrEmpty() )
                 {

@@ -11,7 +11,7 @@ namespace CommunityCoreLibrary.Detour
         
         // HARMONY CANDIDATE: postfix
         [DetourMember( typeof( ThingSelectionUtility ) )]
-        internal static bool                _SelectableByMapClick( this Thing t )
+        internal static bool                _SelectableByMapClick( Thing t )
         {
             // If it's not selectable,
             // not spawned, or;
@@ -43,7 +43,7 @@ namespace CommunityCoreLibrary.Detour
 
         // HARMONY CANDIDATE: prefix
         [DetourMember( typeof( ThingSelectionUtility ) )]
-        internal static bool                _SelectableByHotkey( this Thing t )
+        internal static bool                _SelectableByHotkey( Thing t )
         {
             if(
                 ( !t.def.selectable )||
