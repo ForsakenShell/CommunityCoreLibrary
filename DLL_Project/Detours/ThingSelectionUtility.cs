@@ -9,8 +9,9 @@ namespace CommunityCoreLibrary.Detour
     internal static class _ThingSelectionUtility
     {
         
+        // HARMONY CANDIDATE: postfix
         [DetourMember( typeof( ThingSelectionUtility ) )]
-        internal static bool                _SelectableNow( this Thing t )
+        internal static bool                _SelectableByMapClick( this Thing t )
         {
             // If it's not selectable,
             // not spawned, or;
@@ -18,19 +19,19 @@ namespace CommunityCoreLibrary.Detour
             if(
                 ( !t.def.selectable )||
                 ( !t.Spawned )||
-                ( HideItemManager.PreventItemSelection( t ) )
+                ( HideItemManager.PreventItemSelection( t ) ) // changed
             )
             {
                 return false;
             }
-            if(
+            if (
                 ( t.def.size.x == 1 )&&
                 ( t.def.size.z == 1 )
             )
             {
                 return !t.Position.Fogged( t.Map );
             }
-            foreach( var cell in t.OccupiedRect() )
+            foreach ( var cell in t.OccupiedRect() )
             {
                 if( !cell.Fogged( t.Map ) )
                 {
@@ -38,6 +39,32 @@ namespace CommunityCoreLibrary.Detour
                 }
             }
             return false;
+        }
+
+        // HARMONY CANDIDATE: prefix
+        [DetourMember( typeof( ThingSelectionUtility ) )]
+        internal static bool                _SelectableByHotkey( this Thing t )
+        {
+            if(
+                ( !t.def.selectable )||
+                ( HideItemManager.PreventItemSelection( t ) ) // changed
+            )
+            {
+                return false;
+            }
+            Pawn pawn = t as Pawn;
+            if( pawn != null )
+            {
+                if( pawn.Dead )
+                {
+                    return false;
+                }
+                if( pawn.InContainerEnclosed )
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

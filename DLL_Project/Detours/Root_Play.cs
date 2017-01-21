@@ -8,7 +8,7 @@ using Verse;
 namespace CommunityCoreLibrary.Detour
 {
     
-    internal class _RootMap : Verse.Root
+    internal class _Root_Play : Verse.Root
     {
         public MusicManagerPlay musicManagerPlay;
 
@@ -25,12 +25,11 @@ namespace CommunityCoreLibrary.Detour
         [DetourMember( typeof( Root_Play ) )]
         internal void                       _Start()
         {
-            // Do subcontroller preload
+            // changed: do subcontroller preload
             Controller.SubControllers.PreLoad();
-            // Root.Start()
+
             base.Start();
             this.musicManagerPlay = new MusicManagerPlay();
-            // RootMap.Start()
             if (
                 ( Find.GameInitData != null )&&
                 ( !Find.GameInitData.gameToLoad.NullOrEmpty() )
@@ -74,7 +73,7 @@ namespace CommunityCoreLibrary.Detour
             );
         }
         
-        private static void SetupForQuickTestPlay()
+        internal static void SetupForQuickTestPlay()
         {
             Current.ProgramState = ProgramState.Entry;
             Current.Game = new Game();

@@ -22,6 +22,9 @@ namespace CommunityCoreLibrary.Detour
         internal Job                        _TryGiveJob( Pawn pawn )
         {
             bool desperate = pawn.needs.food.CurCategory == HungerCategory.Starving;
+            var firstHediffOfDef = pawn.health.hediffSet.GetFirstHediffOfDef( HediffDefOf.Malnutrition );
+            bool allowCorpse = pawn.RaceProps.Animal || ( firstHediffOfDef != null && firstHediffOfDef.Severity > 0.4f );
+
             Thing foodSource;
             ThingDef foodDef;
 
@@ -37,7 +40,7 @@ namespace CommunityCoreLibrary.Detour
                 true,
                 true,
                 false,
-                true )
+                allowCorpse )
             )
             {
                 //CCL_Log.Message( "Nothing found to eat" );

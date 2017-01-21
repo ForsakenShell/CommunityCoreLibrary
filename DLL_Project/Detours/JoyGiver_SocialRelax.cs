@@ -92,19 +92,22 @@ namespace CommunityCoreLibrary.Detour
         {
             var lister = pawn.Map.gatherSpotLister;
 
-            if (lister.activeSpots.NullOrEmpty() )
+            if( lister.activeSpots.NullOrEmpty() )
             {
                 return null;
             }
 
+            // changed (add extensions)
             var workingSpots = JoyGiver_SocialRelax_Extensions.WorkingSpots();
+
+            // TODO: where are these used? (NuOfBelthasar)
             var NumRadiusCells = JoyGiver_SocialRelax_Extensions.NumRadiusCells();
             var RadialPatternMiddleOutward = JoyGiver_SocialRelax_Extensions.RadialPatternMiddleOutward();
 
             workingSpots.Clear();
             for( int index = 0; index < lister.activeSpots.Count; ++index )
             {
-                workingSpots.Add(lister.activeSpots[ index ] );
+                workingSpots.Add( lister.activeSpots[ index ] );
             }
 
             CompGatherSpot compGatherSpot;
@@ -154,6 +157,7 @@ namespace CommunityCoreLibrary.Detour
                     }
                     if( pawn.health.capacities.CapableOf( PawnCapacityDefOf.Manipulation ) )
                     {
+                        // changed (custom drug finding logic) {
                         Thing drugSource;
                         ThingDef drugDef;
                         if( DrugUtility.TryFindJoyDrug( compGatherSpot.parent.Position, pawn, 40f, true, JoyGiver_SocialRelax_Extensions.NurseableDrugs(), out drugSource, out drugDef ) )
@@ -173,7 +177,7 @@ namespace CommunityCoreLibrary.Detour
                                 job.count = Mathf.Min( drugSource.stackCount, drugSource.def.ingestible.maxNumToIngestAtOnce );
                             }
 
-                        }
+                        } // } changed
                     }
                     return job;
                 }

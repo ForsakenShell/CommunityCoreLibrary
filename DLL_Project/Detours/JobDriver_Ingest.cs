@@ -57,6 +57,7 @@ namespace CommunityCoreLibrary.Detour
 
         #region Detoured Methods
 
+        // TODO: we probably don't need this anymore; it matches the existing binary (NuOfBelthasar)
         [DetourMember]
         internal bool                       _UsingNutrientPasteDispenser
         {
@@ -86,6 +87,7 @@ namespace CommunityCoreLibrary.Detour
             return string.Format( foodDef.ingestible.ingestReportString, foodDef.label );
         }
 
+        // TODO: check for changes in A16; I can't figure out how to decompile an iterator (NuOfBelthasar)
         [DetourMember]
         internal IEnumerable<Toil>          _PrepareToIngestToils_Dispenser()
         {

@@ -34,12 +34,13 @@ namespace CommunityCoreLibrary.Detour
                     return( drugProps.chemical == chemical );
                     // Core empty check???
                     /*
-                    if(
-                        ( list[ index ].Position.Roofed() )||
-                        ( list[ index ].Position.InHorDistOf( pawn.Position, 45f ) )
+                     * 
+					if ( 
+                         ( list[ i ].Position.Roofed( list[ i ].Map )||
+                         ( !list[ i ].Position.InHorDistOf( pawn.Position, 45f ) )
                     )
-                    {
-                    }
+					{
+					}
                     */
                 }
             }
@@ -53,7 +54,10 @@ namespace CommunityCoreLibrary.Detour
         [DetourMember( typeof( AddictionUtility ) )]
         internal static bool                _CanBingeOnNow( Pawn pawn, ChemicalDef chemical, DrugCategory drugCategory )
         {
-            if( !chemical.canBinge )
+            if(
+                ( !chemical.canBinge )||
+                ( !pawn.Spawned )
+            )
             {
                 return false;
             }

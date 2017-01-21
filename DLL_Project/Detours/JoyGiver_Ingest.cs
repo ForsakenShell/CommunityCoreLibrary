@@ -17,6 +17,7 @@ namespace CommunityCoreLibrary.Detour
         {
             if(
                 ( thingDef.ingestible == null )||
+                ( !thingDef.IsIngestible )||
                 ( thingDef.ingestible.joyKind == null )||
                 ( thingDef.ingestible.joy <= 0f )
             )
@@ -89,7 +90,7 @@ namespace CommunityCoreLibrary.Detour
         }
 
         [DetourMember]
-        internal bool                       _CanUseIngestItemForJoy( Pawn pawn, Thing t )
+        internal bool                       _CanUseIngestForJoy( Pawn pawn, Thing t )
         {
             if(
                 ( t.Spawned )&&

@@ -46,6 +46,8 @@ namespace CommunityCoreLibrary.Detour
         1.0 +--------------------------------------------------------------+
         */
 
+        // TODO: will likely require major updates;
+        //       to start with, Rimworld now uses Verse.UI in place of UnitiyEngine.Screen
         [DetourMember( typeof( MainMenuDrawer ), InjectionSequence.DLLLoad )]
         internal static void                _MainMenuOnGUI()
         {

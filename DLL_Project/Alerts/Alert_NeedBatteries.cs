@@ -13,17 +13,17 @@ namespace CommunityCoreLibrary
 
         static bool CheckThing( Thing thing )
         {
-            var p = thing.TryGetComp<CompPowerTrader>();
+            var p = thing.TryGetComp< CompPowerTrader >();
 
             // Only check for power traders
             // That are connected to a power network
             // Which aren't powered on
             // But want to be powered on
             return
-                (p != null) &&
-                (p.PowerNet != null) &&
-                (!p.PowerOn) &&
-                (p.DesirePowerOn);
+                ( p != null )&&
+                ( p.PowerNet != null )&&
+                ( !p.PowerOn )&&
+                ( p.DesirePowerOn );
 
         }
 
@@ -61,7 +61,7 @@ namespace CommunityCoreLibrary
             var powerTraders = from map in Find.Maps
                                where map.IsPlayerHome
                                from building in map.listerBuildings.allBuildingsColonist
-                               where CheckThing(building)
+                               where CheckThing( building )
                                select building;
 
             if ( powerTraders.Count() > 0 )

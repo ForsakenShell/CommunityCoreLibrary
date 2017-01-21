@@ -5,9 +5,8 @@ using Verse;
 
 namespace CommunityCoreLibrary
 {
-
-    // TODO: replace this (probably ShowEnvironment)
-    public class ToggleSetting_ShowBeauty : ToggleSetting
+    
+    public class ToggleSetting_ShowEnvironment : ToggleSetting
     {
 
         public override bool Value

@@ -69,6 +69,11 @@ namespace CommunityCoreLibrary.Detour
         internal Thing                      _BestIngestTarget( Pawn pawn )
         {
             var chemical = GetChemical( pawn );
+            if( chemical == null )
+            {
+                Log.ErrorOnce( "Tried to binge on null chemical.", 1393746152 );
+                return null;
+            }
             var overdose = pawn.health.hediffSet.GetFirstHediffOfDef( HediffDefOf.DrugOverdose );
             var ingestibleThing = GenClosest.ClosestThingReachable(
                 pawn.Position,

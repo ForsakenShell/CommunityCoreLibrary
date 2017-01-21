@@ -102,6 +102,7 @@ namespace CommunityCoreLibrary.Detour
                 return nutrientPasteDispenser.DispensableDef;
             }
 
+            // changed {
             var synthesizer = foodSource as Building_AutomatedFactory;
             if( synthesizer != null )
             {
@@ -118,7 +119,7 @@ namespace CommunityCoreLibrary.Detour
                 CCL_Log.Message( string.Format( "GetFinalIngestibleDef( {0} ) - {1}", foodSource.ThingID, synthesizedDef.defName ) );
 #endif
                 return synthesizedDef;
-            }
+            } // } changed
 
             var prey = foodSource as Pawn;
             if( prey != null )
@@ -261,7 +262,7 @@ namespace CommunityCoreLibrary.Detour
             }
 
             var mealDef = t.def;
-            if( t is Building_AutomatedFactory )
+            if( t is Building_AutomatedFactory ) // changed
             {
                 mealDef = ((Building_AutomatedFactory)t).ConsideredProduct;
             }
@@ -270,38 +271,22 @@ namespace CommunityCoreLibrary.Detour
                 mealDef = ((Building_NutrientPasteDispenser)t).DispensableDef;
             }
 
-            var corpse = t as Corpse;
-            if( !ingester.story.traits.HasTrait( TraitDefOf.Ascetic ) )
+            if (
+                 ( !ingester.story.traits.HasTrait( TraitDefOf.Ascetic ))&&
+                 ( mealDef.ingestible.tasteThought != null )
+            )
             {
-                if( mealDef.ingestible.preferability == FoodPreferability.MealLavish )
-                {
-                    ingestThoughts.Add( ThoughtDefOf.AteLavishMeal );
-                }
-                else if( mealDef.ingestible.preferability == FoodPreferability.MealFine )
-                {
-                    ingestThoughts.Add( ThoughtDefOf.AteFineMeal );
-                }
-                else if( mealDef.ingestible.preferability == FoodPreferability.MealAwful )
-                {
-                    ingestThoughts.Add( ThoughtDefOf.AteAwfulMeal );
-                }
-                else if( mealDef.ingestible.tasteThought == ThoughtDefOf.AteRawFood )
-                {
-                    ingestThoughts.Add( ThoughtDefOf.AteRawFood );
-                }
-                else if( corpse != null )
-                {
-                    ingestThoughts.Add( ThoughtDefOf.AteCorpse );
-                }
+                ingestThoughts.Add( mealDef.ingestible.tasteThought );
             }
 
-            var isCannibal = ingester.story.traits.HasTrait( TraitDefOf.Cannibal );
+            var isCannibal = ingester.story.traits.HasTrait( TraitDefOf.Cannibal ); // changed (is canibal check)
             var comp = t.TryGetComp<CompIngredients>();
             if(
                 ( FoodUtility.IsHumanlikeMeat( mealDef ) )&&
                 ( ingester.RaceProps.Humanlike )
             )
             {
+                // changed
                 ingestThoughts.Add( !isCannibal ? ThoughtDefOf.AteHumanlikeMeatDirect : ThoughtDefOf.AteHumanlikeMeatDirectCannibal );
             }
             else if( comp != null )
@@ -316,6 +301,7 @@ namespace CommunityCoreLibrary.Detour
                             ( FoodUtility.IsHumanlikeMeat( ingredientDef ) )
                         )
                         {
+                            // changed
                             ingestThoughts.Add( !isCannibal ? ThoughtDefOf.AteHumanlikeMeatAsIngredient : ThoughtDefOf.AteHumanlikeMeatAsIngredientCannibal );
                         }
                         else if( ingredientDef.ingestible.specialThoughtAsIngredient != null )
@@ -364,6 +350,7 @@ namespace CommunityCoreLibrary.Detour
                 return null;
             }
 
+            // changed (use validator)
             var validator = new DispenserValidator();
             validator.getterCanManipulate = getterCanManipulate;
             validator.allowDispenserFull = allowDispenserFull;
@@ -375,16 +362,21 @@ namespace CommunityCoreLibrary.Detour
             validator.allowDrug = allowDrug;
             validator.desperate = desperate;
             validator.eater = eater;
-            validator.minPref =
-                desperate
-                ? FoodPreferability.DesperateOnly
-                :
-                    !eater.RaceProps.Humanlike
-                    ? FoodPreferability.NeverForNutrition
-                    :
-                        eater.needs.food.CurCategory >= HungerCategory.UrgentlyHungry
-                        ? FoodPreferability.RawBad
-                        : FoodPreferability.MealAwful;
+
+            if ( !eater.RaceProps.Humanlike )
+            {
+                validator.minPref = FoodPreferability.NeverForNutrition;
+            }
+            else if ( desperate )
+            {
+                validator.minPref = FoodPreferability.DesperateOnly;
+            }
+            else
+            {
+                validator.minPref = ( ( eater.needs.food.CurCategory <= HungerCategory.UrgentlyHungry )
+                                        ? FoodPreferability.RawBad
+                                        : FoodPreferability.MealAwful );
+            }
 
             var thingRequest =
                 (
@@ -413,7 +405,7 @@ namespace CommunityCoreLibrary.Detour
                     eater,
                     getter.Position,
                     thingsRequested,
-                    PathEndMode.InteractionCell,
+                    PathEndMode.InteractionCell,  // TODO: should this be PathEndMode.ClosestTouch?
                     TraverseParms.For(
                         getter,
                         Danger.Deadly,
@@ -433,7 +425,7 @@ namespace CommunityCoreLibrary.Detour
                 var searchRegionsMax = 30;
                 if( getter.Faction == Faction.OfPlayer )
                 {
-                    searchRegionsMax = 60;
+                    searchRegionsMax = 100;
                 }
                 potentialFoodSource = GenClosest.ClosestThingReachable(
                     getter.Position,
@@ -606,11 +598,11 @@ namespace CommunityCoreLibrary.Detour
 
                         return false;
                     }
-                    if( !ReachabilityUtility.CanReach(
-                            getter,
-                            t.InteractionCell,
+                    if( !getter.Map.reachability.CanReachNonLocal(
+                            getter.Position,
+                            new TargetInfo( t.InteractionCell, t.Map, false ),
                             PathEndMode.OnCell,
-                            Danger.Some )
+                            TraverseParms.For(getter, Danger.Some, TraverseMode.ByPawn, false) )
                     )
                     {
 #if _I_AM_A_POTATO_
@@ -750,7 +742,17 @@ namespace CommunityCoreLibrary.Detour
 #endif
                         return false;
                     }
-                    if(
+                    if ( !t.def.IsNutritionGivingIngestible )
+                    {
+#if _I_AM_A_POTATO_
+                        CCL_Log.Message(
+                            string.Format( "{0} cannot use {1} because it is not a nutrient giving ingestible", getter.LabelShort, t.ThingID ),
+                            "Detour.FoodUtility.DispenserValidator"
+                        );
+#endif
+                        return false;
+                    }
+                    if (
                         ( !allowCorpse )&&
                         ( t is Corpse )
                     )

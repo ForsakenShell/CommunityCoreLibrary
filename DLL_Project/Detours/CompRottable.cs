@@ -96,11 +96,11 @@ namespace CommunityCoreLibrary.Detour
         #endregion
 
         #region Method Detours
-
+        
         [DetourMember]
         internal void                       _CompTickRare()
         {
-            if( this.IsInRefrigerator )
+            if( this.IsInRefrigerator ) // changed
             {
                 return;
             }
@@ -112,33 +112,38 @@ namespace CommunityCoreLibrary.Detour
                 ( this.PropsRot.rotDestroys )
             )
             {
-                this.parent.Destroy( DestroyMode.Vanish );
-            }
-            else
-            {
-                if( Mathf.FloorToInt( num / (float) GenDate.TicksPerDay ) == Mathf.FloorToInt( this.RotProgress / (float) GenDate.TicksPerDay ) )
+                if ( this.parent.Map.slotGroupManager.SlotGroupAt( this.parent.Position ) != null )
                 {
-                    return;
-                }
-                if(
-                    ( this.Stage == RotStage.Rotting )&&
-                    ( this.PropsRot.rotDamagePerDay > 0.0f )
-                )
-                {
-                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.rotDamagePerDay ) ) );
-                }
-                else
-                {
-                    if(
-                        ( this.Stage != RotStage.Dessicated )||
-                        ( this.PropsRot.dessicatedDamagePerDay <= 0.0f )||
-                        ( !this.ShouldTakeDessicateDamage() )
-                    )
+                    Messages.Message( "MessageRottedAwayInStorage".Translate( new object[]
                     {
-                        return;
-                    }
-                    this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.dessicatedDamagePerDay ) ) );
+                        this.parent.Label
+                    } ).CapitalizeFirst(), MessageSound.Silent );
+                    LessonAutoActivator.TeachOpportunity( ConceptDefOf.SpoilageAndFreezers, OpportunityType.GoodToKnow );
                 }
+                this.parent.Destroy( DestroyMode.Vanish );
+                return;
+            }
+            // changed (made TicksPerDay configurable)
+            if( Mathf.FloorToInt( num / (float) GenDate.TicksPerDay ) == Mathf.FloorToInt( this.RotProgress / (float) GenDate.TicksPerDay ) )
+            {
+                return;
+            }
+            if(
+                ( this.Stage == RotStage.Rotting )&&
+                ( this.PropsRot.rotDamagePerDay > 0.0f )
+            )
+            {
+                this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.rotDamagePerDay ) ) );
+                return;
+            }
+            if(
+                ( this.Stage == RotStage.Dessicated )&&
+                ( this.PropsRot.dessicatedDamagePerDay > 0.0f )&&
+                ( this.ShouldTakeDessicateDamage() )
+            )
+            {
+                this.parent.TakeDamage( new DamageInfo( DamageDefOf.Rotting, GenMath.RoundRandom( this.PropsRot.dessicatedDamagePerDay ) ) );
+                return;
             }
         }
 
@@ -149,35 +154,37 @@ namespace CommunityCoreLibrary.Detour
             switch( this.Stage )
             {
             case RotStage.Fresh:
-                stringBuilder.AppendLine( "RotStateFresh".Translate() );
-                break;
+                stringBuilder.Append( "RotStateFresh".Translate() + "." );
+                    break;
             case RotStage.Rotting:
-                stringBuilder.AppendLine( "RotStateRotting".Translate() );
-                break;
+                stringBuilder.Append( "RotStateRotting".Translate() + "." );
+                    break;
             case RotStage.Dessicated:
-                stringBuilder.AppendLine( "RotStateDessicated".Translate() );
-                break;
+                stringBuilder.Append( "RotStateDessicated".Translate() + "." );
+                    break;
             }
-            if( this.IsInRefrigerator )
+            if( this.IsInRefrigerator ) // changed
             {
-                stringBuilder.AppendLine( "RefrigeratedStorage".Translate() );
+                // TODO: check that these strings output as expected
+                stringBuilder.Append( "RefrigeratedStorage".Translate() + "." );
             }
             else if( ( this.PropsRot.TicksToRotStart - this.RotProgress ) > 0.0f )
             {
                 float num = GenTemperature.RotRateAtTemperature( Mathf.RoundToInt(
                     GenTemperature.GetTemperatureForCell( this.parent.PositionHeld, this.parent.Map ) ) );
                 int rotAtCurrentTemp = this.TicksUntilRotAtCurrentTemp;
-                if( num < 1.0f / 1000.0f )
+                stringBuilder.AppendLine();
+                if ( num < 1.0f / 1000.0f )
                 {
-                    stringBuilder.AppendLine( "CurrentlyFrozen".Translate() );
+                    stringBuilder.Append( "CurrentlyFrozen".Translate() + "." );
                 }
                 else if( num < 0.999000012874603f )
                 {
-                    stringBuilder.AppendLine( "CurrentlyRefrigerated".Translate( rotAtCurrentTemp.ToStringTicksToPeriodVagueMax() ) );
+                    stringBuilder.Append( "CurrentlyRefrigerated".Translate( rotAtCurrentTemp.ToStringTicksToPeriodVagueMax() ) + "." );
                 }
                 else
                 {
-                    stringBuilder.AppendLine( "NotRefrigerated".Translate( rotAtCurrentTemp.ToStringTicksToPeriodVagueMax() ) );
+                    stringBuilder.Append( "NotRefrigerated".Translate( rotAtCurrentTemp.ToStringTicksToPeriodVagueMax() ) + "." );
                 }
             }
             return stringBuilder.ToString();

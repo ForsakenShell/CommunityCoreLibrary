@@ -14,7 +14,7 @@ namespace CommunityCoreLibrary.Detour
     {
 
         #region Detoured Methods
-
+        
         [DetourMember]
         internal Thing                      _BestIngestItem( Pawn pawn, Predicate<Thing> extraValidator )
         {
@@ -35,6 +35,8 @@ namespace CommunityCoreLibrary.Detour
                     return containerItem;
                 }
             }
+
+            // changed (custom drug finding logic) {
             Thing ingestible;
             ThingDef ingestibleDef;
             if( !DrugUtility.TryFindJoyDrug(
@@ -47,7 +49,7 @@ namespace CommunityCoreLibrary.Detour
                 out ingestibleDef ) )
             {
                 return null;
-            }
+            } // } changed
             return ingestible;
         }
 

@@ -86,6 +86,7 @@
     <Compile Include="CompProperties\CompProperties_LowIdleDraw.cs" />
     <Compile Include="Defs\AdvancedResearchDef.cs" />
     <Compile Include="ThingComps\CompRangedGizmoGiver.cs" />
+    <Compile Include="ToggleSettings\ToggleSetting_ShowEnvironment.cs" />
     <Compile Include="Toils\Toils_Common.cs" />
     <Compile Include="ThingComps\CompRefrigerated.cs" />
     <Compile Include="CompProperties\CompProperties_ColoredLight.cs" />
@@ -261,7 +262,7 @@
     <Compile Include="Detours\ThingListGroupHelper.cs" />
     <Compile Include="Detours\GenConstruct.cs" />
     <Compile Include="Detours\WorkGiver_Warden_DeliverFood.cs" />
-    <Compile Include="Detours\RootMap.cs" />
+    <Compile Include="Detours\Root_Play.cs" />
     <Compile Include="Detours\PageUtility.cs" />
     <Compile Include="SpecialInjectors\PostLoadInjectorTest.cs" />
     <Compile Include="Detours\ModLister.cs" />
@@ -277,10 +278,8 @@
     <Compile Include="Classes\Abstract\ToggleSetting.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_ShowZones.cs" />
     <Compile Include="Detours\PlaySettings.cs" />
-    <Compile Include="ToggleSettings\ToggleSetting_ShowBeauty.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_AutoHomeArea.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_ShowColonistBar.cs" />
-    <Compile Include="ToggleSettings\ToggleSetting_ShowRoomStats.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_UseWorkPriorities.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_ResourceReadoutCategorized.cs" />
     <Compile Include="ToggleSettings\ToggleSetting_ShowMiniMap.cs" />

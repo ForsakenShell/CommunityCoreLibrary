@@ -20,6 +20,7 @@ namespace CommunityCoreLibrary.Detour
         internal const TargetIndex          DelivereeInd = TargetIndex.B;
         internal const float                FeedDurationMultiplier = 1.5f;
 
+        // TODO: check for changes in A16; I can't figure out how to decompile an iterator (NuOfBelthasar)
         [DetourMember]
         internal IEnumerable<Toil>          _MakeNewToils()
         {
