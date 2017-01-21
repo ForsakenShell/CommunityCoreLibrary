@@ -12,8 +12,6 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 
-// TODO: I assume in general these need to be updated to match the internal changes in A16,
-//       but for now I'm making the minimal changes to compile
 namespace CommunityCoreLibrary.Detour
 {
 

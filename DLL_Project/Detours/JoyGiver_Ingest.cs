@@ -90,7 +90,7 @@ namespace CommunityCoreLibrary.Detour
         }
 
         [DetourMember]
-        internal bool                       _CanUseIngestForJoy( Pawn pawn, Thing t )
+        internal bool                       _CanIngestForJoy( Pawn pawn, Thing t )
         {
             if(
                 ( t.Spawned )&&
