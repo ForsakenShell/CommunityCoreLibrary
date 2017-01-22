@@ -66,8 +66,8 @@ namespace CommunityCoreLibrary.Detour
             case ThingRequestGroup.HaulableAlways:
                 return def.alwaysHaulable;
                     
-			case ThingRequestGroup.Plant:
-				return def.category == ThingCategory.Plant;
+            case ThingRequestGroup.Plant:
+                return def.category == ThingCategory.Plant;
                 
             case ThingRequestGroup.FoodSource:
                 return def.IsNutritionGivingIngestible || def.IsFoodDispenser;
@@ -139,7 +139,7 @@ namespace CommunityCoreLibrary.Detour
                 return def.IsDrug;
                 
             case ThingRequestGroup.Construction:
-				return def.IsBlueprint || def.IsFrame;
+                return def.IsBlueprint || def.IsFrame;
                 
             case ThingRequestGroup.HasGUIOverlay:
                 return def.drawGUIOverlay;
@@ -156,14 +156,14 @@ namespace CommunityCoreLibrary.Detour
             case ThingRequestGroup.Art:
                 return def.HasComp( typeof( CompArt ) );
                 
-			case ThingRequestGroup.ContainerEnclosure:
-				return typeof( IThingContainerOwner ).IsAssignableFrom( def.thingClass ) && !def.IsCorpse;
+            case ThingRequestGroup.ContainerEnclosure:
+                return typeof( IThingContainerOwner ).IsAssignableFrom( def.thingClass ) && !def.IsCorpse;
 
-			case ThingRequestGroup.ActiveDropPod:
-				return typeof( IActiveDropPod ).IsAssignableFrom( def.thingClass );
+            case ThingRequestGroup.ActiveDropPod:
+                return typeof( IActiveDropPod ).IsAssignableFrom( def.thingClass );
 
-			case ThingRequestGroup.Transporter:
-				return def.HasComp( typeof( CompTransporter ) );
+            case ThingRequestGroup.Transporter:
+                return def.HasComp( typeof( CompTransporter ) );
 
             default:
                 throw new ArgumentException( "group" );

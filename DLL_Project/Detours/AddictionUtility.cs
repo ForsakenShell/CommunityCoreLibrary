@@ -35,12 +35,12 @@ namespace CommunityCoreLibrary.Detour
                     // Core empty check???
                     /*
                      * 
-					if ( 
+                    if ( 
                          ( list[ i ].Position.Roofed( list[ i ].Map )||
                          ( !list[ i ].Position.InHorDistOf( pawn.Position, 45f ) )
                     )
-					{
-					}
+                    {
+                    }
                     */
                 }
             }

@@ -73,17 +73,17 @@ namespace CommunityCoreLibrary.Detour
             var curJob = this.pawn.jobs.curJob;
             var foodSource = IngestibleSource;
             if( foodSource == null )
-			{
-				return this.ReportStringProcessed( this.CurJob.def.reportString );
-			}
+            {
+                return this.ReportStringProcessed( this.CurJob.def.reportString );
+            }
             var foodDef = FoodUtility.GetFinalIngestibleDef( foodSource );
             if(
                 ( foodDef == null )||
                 ( string.IsNullOrEmpty( foodDef.ingestible.ingestReportString ) )
             )
-			{
-				return this.ReportStringProcessed( this.CurJob.def.reportString );
-			}
+            {
+                return this.ReportStringProcessed( this.CurJob.def.reportString );
+            }
             return string.Format( foodDef.ingestible.ingestReportString, foodDef.label );
         }
 

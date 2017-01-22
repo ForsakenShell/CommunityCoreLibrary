@@ -5,8 +5,8 @@ using UnityEngine;
 namespace CommunityCoreLibrary
 {
 
-	public class MainMenu_SaveQuitToOS : MainMenu
-	{
+    public class MainMenu_SaveQuitToOS : MainMenu
+    {
 
         public override Color               Color
         {
@@ -24,8 +24,8 @@ namespace CommunityCoreLibrary
             );
         }
 
-		public override void ClickAction()
-		{
+        public override void ClickAction()
+        {
             LongEventHandler.QueueLongEvent(
                 () =>
                     {
@@ -36,8 +36,8 @@ namespace CommunityCoreLibrary
                 false,
                 null
             );
-		}
+        }
 
-	}
+    }
 
 }
