@@ -23,7 +23,7 @@ namespace CommunityCoreLibrary
             var buildings = from map in Find.Maps
                             where map.IsPlayerHome
                             from building in map.listerBuildings.allBuildingsColonist
-                            where building.def.IsHopper()
+                            where building.def.IsHopperUser()
                             select building;
 
             foreach ( var building in buildings )

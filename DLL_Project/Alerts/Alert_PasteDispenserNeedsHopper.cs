@@ -29,7 +29,7 @@ namespace CommunityCoreLibrary
                 var edifices = from cell in GenAdj.CellsAdjacentCardinal( dispenser )
                                select GridsUtility.GetEdifice( cell, dispenser.Map );
 
-                if ( edifices.Any( edifice => edifice != null && edifice.def == ThingDefOf.Hopper ) )
+                if ( edifices.All( edifice => edifice == null || edifice.def != ThingDefOf.Hopper ) )
                 {
                     return AlertReport.CulpritIs( dispenser );
                 }
