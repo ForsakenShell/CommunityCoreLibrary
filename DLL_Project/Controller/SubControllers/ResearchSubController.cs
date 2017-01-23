@@ -126,16 +126,16 @@ namespace CommunityCoreLibrary.Controller
 
         public override bool                Initialize ()
         {
-            if( Data.AdvancedResearchDefs.NullOrEmpty() )
+            // Create caches
+            InitializeCaches();
+
+            if ( Data.AdvancedResearchDefs.NullOrEmpty() )
             {
                 // No advanced research, hybernate
                 strReturn = "No advanced research defined, hybernating...";
                 State = Controller.SubControllerState.Hybernating;
                 return true;
             }
-
-            // Create caches
-            InitializeCaches();
 
             // Get the initial state
             GetInitialState();

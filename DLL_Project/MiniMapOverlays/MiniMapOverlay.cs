@@ -97,7 +97,7 @@ namespace CommunityCoreLibrary.MiniMap
         {
             get
             {
-                if ( _texture == null )
+                if ( _texture == null && Find.VisibleMap != null )
                 {
                     _texture = new Texture2D( Find.VisibleMap.Size.x, Find.VisibleMap.Size.z );
 

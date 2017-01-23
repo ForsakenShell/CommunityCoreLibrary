@@ -40,6 +40,11 @@ namespace CommunityCoreLibrary.MiniMap
             regEx = new Regex( regExPattern );
         }
 
+        public MiniMapController() : base( null)  // Core cares about this apparently
+        {
+            Window_MiniMap.minimapRect = defaultWindowRect;
+        }
+
         public                          MiniMapController( Map map ) : base( map )
         {
             Window_MiniMap.minimapRect = defaultWindowRect;

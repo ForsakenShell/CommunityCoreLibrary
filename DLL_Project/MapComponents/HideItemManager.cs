@@ -23,6 +23,7 @@ namespace CommunityCoreLibrary
         private static Dictionary<IntVec3,Thing> hiderBuildings;
 
         public HideItemManager( Map map ) : base( map ) { }
+        public HideItemManager() : base( null ) { }  // Core cares about this apparently
 
         static HideItemManager()
         {
