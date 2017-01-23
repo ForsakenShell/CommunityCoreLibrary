@@ -360,7 +360,7 @@
     <None Include="PostBuild.bat" />
     <None Include="Controller\SubControllers\SubControllerOrderingReference.txt" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Detours\Developer\" />
+  </ItemGroup>
 </Project>

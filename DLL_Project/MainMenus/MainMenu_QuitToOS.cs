@@ -36,7 +36,7 @@ namespace CommunityCoreLibrary
             {
                 Find.WindowStack.Add( Dialog_MessageBox.CreateConfirmation(
                     "ConfirmQuit".Translate(),
-                    GenScene.GoToMainMenu,
+                    Root.Shutdown,
                     true,
                     null
                 ) );
