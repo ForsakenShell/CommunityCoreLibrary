@@ -85,10 +85,14 @@ namespace CommunityCoreLibrary.Detour
                 Scribe.ExitNode();
                 this.World.FinalizeInit();
                 LongEventHandler.SetCurrentEventText( "LoadingMap".Translate() );
+
                 List<Map> list = this.maps;
                 Scribe_Collections.LookList<Map>( ref list, "maps", LookMode.Deep, new object[ 0 ] );
+                this.maps = list;
+
                 int num = -1;
                 Scribe_Values.LookValue<int>( ref num, "visibleMapIndex", -1, false );
+
                 if( num < 0 && this.maps.Any<Map>() )
                 {
                     Log.Error( "Visible map is null after loading but there are maps available. Setting visible map to [0]." );
